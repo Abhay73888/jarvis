@@ -50,3 +50,14 @@ class ModelRouter:
             "roles": dict(self._ai.roles),
             "active_default": (self.provider_for_role().name if self.has_provider else None),
         }
+
+    async def close(self) -> None:
+        """Close all cached provider HTTP clients."""
+        for provider in self._cache.values():
+            try:
+                await provider.close()
+            except Exception:
+                pass
+        self._cache.clear()
+
+

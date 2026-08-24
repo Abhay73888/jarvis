@@ -10,6 +10,12 @@ from pydantic import BaseModel, Field
 from app.security.risk import RiskLevel
 from app.tools.base import BaseTool, ToolContext, ToolResult
 
+# Prime cpu_percent on module load so subsequent calls with interval=None are non-blocking (0ms)
+try:
+    psutil.cpu_percent(interval=None)
+except Exception:
+    pass
+
 
 class _SystemInfoArgs(BaseModel):
     pass
@@ -30,7 +36,8 @@ class SystemInfoTool(BaseTool):
         battery = psutil.sensors_battery()
         data = {
             "os": f"{platform.system()} {platform.release()} ({platform.machine()})",
-            "cpu_percent": psutil.cpu_percent(interval=0.3),
+            "cpu_percent": psutil.cpu_percent(interval=None),
+
             "cpu_cores": psutil.cpu_count(logical=True),
             "ram_percent": vm.percent,
             "ram_used_gb": round(vm.used / 1e9, 2),

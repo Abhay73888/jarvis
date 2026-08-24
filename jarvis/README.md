@@ -5,11 +5,11 @@ say (English / Hindi / Hinglish), reasons about it, operates your computer
 through real tools, verifies the result, and remembers** — with permissions,
 risk analysis, and honest failure reporting.
 
-> **Status: Phases 1–4 + 7 complete — 92 automated tests green, including the
-> browser agent live-verified against the real web with headless Chromium.**
-> Voice, browser agent, vision, GUI arrive in the next phases (below).
+> **Status: Phases 1–4 + 7 complete, Phase 6 partial (TTS, greeting, SSE streaming complete) — 113 automated tests green, including browser agent and provider SSE streaming.**
+> Voice STT/wake-word, vision, GUI arrive in the next phases (below).
 > Nothing is faked: every ✅ feature executes and verifies for real; every 🔶
 > feature is real code awaiting verification on an actual Windows machine.
+
 
 ---
 
@@ -158,10 +158,11 @@ docs/WINDOWS-NOTES.md   UAC/UWP/UIA/AV constraints — the honest limits
 ## Development
 
 ```bash
-pytest -q               # 74 tests
-pytest tests/test_security.py -q
+pytest -q               # 113 tests
+pytest tests/test_greeting_tts_streaming.py -q
 python run.py doctor
 ```
+
 
 Conventions: pydantic-typed everything; async by default; tools never import
 UI; every tool declares risk + category + schema; every feature gets tests in

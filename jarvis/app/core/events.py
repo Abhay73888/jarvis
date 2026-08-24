@@ -17,12 +17,14 @@ class Topics:
     """Canonical event topics. Payloads are plain JSON-able dicts."""
 
     STATUS = "status"                      # {state: listening|thinking|working|speaking|idle|error, detail}
+    RESPONSE_DELTA = "response.delta"      # {delta: str} — live streaming tokens
     TOOL_STARTED = "tool.started"          # {tool, args}
     TOOL_FINISHED = "tool.finished"        # {tool, success, duration_ms, message}
     PERMISSION_REQUESTED = "permission.requested"  # PermissionRequest.to_dict()
     NOTIFICATION = "notification"          # {level, title, message}
     INTERRUPT = "interrupt"                # {} — emergency stop
     MEMORY_UPDATED = "memory.updated"      # {kind}
+
 
 
 Handler = Callable[[str, dict[str, Any]], None] | Callable[[str, dict[str, Any]], Any]

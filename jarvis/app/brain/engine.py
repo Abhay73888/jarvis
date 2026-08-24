@@ -164,15 +164,26 @@ class AgentEngine:
         for iteration in range(max_iter):
             if self._cancelled.is_set():
                 return "Stopped."
-            await self._status("thinking" if iteration == 0 else "working")
-            response = await provider.chat(
+            response: ChatResponse | None = None
+            assistant_text = ""
+            async for event in provider.chat_stream(
                 messages, tools=tools,
                 temperature=self._settings.ai.temperature,
-                max_tokens=self._settings.ai.max_tokens)
+                max_tokens=self._settings.ai.max_tokens):
+                if event.text:
+                    assistant_text += event.text
+                    await self._bus.publish(Topics.RESPONSE_DELTA, {"delta": event.text})
+                if event.response is not None:
+                    response = event.response
+
+            if response is None:
+                response = ChatResponse(content=assistant_text)
+
             assistant_text = response.content
 
             if not response.wants_tools:
                 return assistant_text or "Done."
+
 
             messages.append(ChatMessage(role="assistant", content=assistant_text,
                                         tool_calls=response.tool_calls))

@@ -283,7 +283,10 @@ class PlaywrightDriver:
     async def extract_results(self, engine: str) -> list[dict[str, str]]:
         """Pull structured results off the current search page (engine-aware)."""
         await self._ensure()
+        if "results.html" in (self._page.url or ""):
+            engine = "duckduckgo"
         engine = engine.lower()
+
         extractors = {
             "duckduckgo": "Array.from(document.querySelectorAll('a.result__a')).slice(0, 8)"
                           ".map(a => ({title: a.innerText.trim().slice(0,110), url: a.href}))",

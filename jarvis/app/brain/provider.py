@@ -36,6 +36,13 @@ class ChatResponse:
 
 
 @dataclass
+class StreamEvent:
+    """A streaming chunk from an LLM provider: either live text delta or final response."""
+    text: str = ""
+    response: ChatResponse | None = None
+
+
+@dataclass
 class ChatMessage:
     """Provider-neutral message. `tool_call_id` set when role == 'tool'."""
     role: str                                  # system | user | assistant | tool
@@ -60,6 +67,19 @@ class LLMProvider(ABC):
     async def chat(self, messages: list[ChatMessage], tools: list[dict[str, Any]] | None = None,
                    temperature: float = 0.3, max_tokens: int = 1024) -> ChatResponse:
         """Send a chat turn. Must raise ProviderError on transport/auth failure."""
+
+    async def chat_stream(self, messages: list[ChatMessage], tools: list[dict[str, Any]] | None = None,
+                          temperature: float = 0.3, max_tokens: int = 1024):
+        """Stream a chat turn. Default implementation falls back to non-streaming chat()."""
+        resp = await self.chat(messages, tools=tools, temperature=temperature, max_tokens=max_tokens)
+        if resp.content:
+            yield StreamEvent(text=resp.content)
+        yield StreamEvent(response=resp)
+
+    async def close(self) -> None:
+        """Close persistent HTTP clients/connections."""
+        pass
+
 
     # ---- shared helpers
 

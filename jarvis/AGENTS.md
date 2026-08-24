@@ -10,7 +10,8 @@ LLM reasoning + real computer control (apps, files, terminal, browser agent) +
 memory + permissions + verification. Built phase-by-phase per the original
 spec in `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`.
 
-**Current state: Phases 1–4 + 7 complete, 95 pytest tests green.**
+**Current state: Phases 1–4 + 7 complete, Phase 6 partial (TTS, greeting, SSE streaming complete), 113 pytest tests green.**
+
 
 ## Ground rules (non-negotiable)
 

@@ -1,6 +1,19 @@
 # JARVIS settings — user overrides. Delete the file to restore defaults.
 # Secrets NEVER go here: models reference environment variable names.
 
+greeting:
+  enabled: true
+  address: "sir"
+  include_brief: true
+  speak: false
+
+voice:
+  tts_engine: "edge-tts"
+  tts_voice: "en-IN-NeerjaNeural"
+  voice_gender: "female"
+  tts_rate: "+8%"
+  speak_responses: false
+
 personality:
   name: JARVIS
   language_style: auto        # auto | english | hinglish

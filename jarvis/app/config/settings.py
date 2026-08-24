@@ -95,8 +95,19 @@ class VoiceSettings(BaseModel):
     stt_engine: str = "faster-whisper"       # Phase 6
     stt_model: str = "small"
     tts_engine: str = "edge-tts"             # Phase 6
-    tts_voice: str = "en-IN-PrabhatNeural"
+    tts_voice: str = "en-IN-NeerjaNeural"
+    voice_gender: str = "female"
+    speak_responses: bool = False
+    tts_rate: str = "+8%"
     language: str = "auto"                   # auto | en | hi | hinglish
+
+
+class GreetingSettings(BaseModel):
+    enabled: bool = True
+    address: str = "sir"
+    include_brief: bool = True
+    speak: bool = False
+
 
 
 class PermissionSettings(BaseModel):
@@ -165,6 +176,7 @@ class ToolsSettings(BaseModel):
 class Settings(BaseModel):
     ai: AISettings = Field(default_factory=AISettings)
     voice: VoiceSettings = Field(default_factory=VoiceSettings)
+    greeting: GreetingSettings = Field(default_factory=GreetingSettings)
     permissions: PermissionSettings = Field(default_factory=PermissionSettings)
     personality: PersonalitySettings = Field(default_factory=PersonalitySettings)
     memory: MemorySettings = Field(default_factory=MemorySettings)
@@ -174,6 +186,7 @@ class Settings(BaseModel):
     dev: DevSettings = Field(default_factory=DevSettings)
     tools: ToolsSettings = Field(default_factory=ToolsSettings)
     log_level: str = "INFO"
+
 
     def writable_roots_resolved(self) -> list[Path]:
         roots = []
@@ -186,6 +199,19 @@ DEFAULT_SETTINGS_YAML = """\
 # JARVIS settings — user overrides. Delete the file to restore defaults.
 # Secrets NEVER go here: models reference environment variable names.
 
+greeting:
+  enabled: true
+  address: "sir"
+  include_brief: true
+  speak: false
+
+voice:
+  tts_engine: "edge-tts"
+  tts_voice: "en-IN-NeerjaNeural"
+  voice_gender: "female"
+  tts_rate: "+8%"
+  speak_responses: false
+
 personality:
   name: JARVIS
   language_style: auto        # auto | english | hinglish
@@ -197,6 +223,7 @@ log_level: INFO
 dev:
   enabled: false
 """
+
 
 DEFAULT_MODELS_YAML = """\
 # Models & roles (Spec §33 model router). PRE-CONFIGURED for Google Gemini —

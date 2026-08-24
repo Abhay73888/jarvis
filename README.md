@@ -57,7 +57,10 @@ Or double click `JARVIS` on your desktop!
 | **Toggle HUD** | `Alt + J` or `F8` or `Ctrl + Shift + A` |
 | **Wake Word** | *"Jarvis"* or *"Hey Jarvis"* |
 | **Push-to-Talk** | Click `🎙️ Speak` or click central glowing Orb |
+| **Startup Greeting** | `python run.py greet [--speak]` |
+| **Install Boot Greeting** | `python run.py startup install [--speak]` |
 | **Emergency Lockdown** | *"Jarvis protocol zero"* or *"Jarvis emergency lockdown"* |
+
 
 ---
 

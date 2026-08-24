@@ -163,8 +163,11 @@ async def test_full_67_flow_search_then_first_wala(jarvis_home, stack, driver, s
                                                    monkeypatch):
     """Spec §67: search → 'first wala open karo' → opens the first result."""
     from app.browser import driver as driver_mod
-    monkeypatch.setitem(driver_mod.SEARCH_ENGINES, "duckduckgo", server_url + "/results.html?q={q}")
+    for engine_key in ("duckduckgo", "google", "bing"):
+        monkeypatch.setitem(driver_mod.SEARCH_ENGINES, engine_key, server_url + "/results.html?q={q}")
     await stack.build()
+
+
 
     first = await stack.engine.turn("python automation tutorial search karo")
     assert first.used_fast_path and first.actions[0]["tool"] == "browser_search"
