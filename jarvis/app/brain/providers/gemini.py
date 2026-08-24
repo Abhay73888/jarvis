@@ -53,10 +53,18 @@ class GeminiProvider(LLMProvider):
                 contents.append({"role": "user" if msg.role == "user" else "model",
                                  "parts": [{"text": msg.content or " "}]})
 
+        gen_config: dict[str, Any] = {
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens,
+        }
+        if "3.7" in self.model or "thinking" in self.model:
+            gen_config["thinkingConfig"] = {"thinkingBudget": 0}
+
         payload: dict[str, Any] = {
             "contents": contents,
-            "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
+            "generationConfig": gen_config,
         }
+
         if system_text:
             payload["systemInstruction"] = {"parts": [{"text": system_text}]}
         if tools:
