@@ -1,0 +1,17 @@
+# Permission policies (Spec §25). Categories: filesystem, terminal, applications,
+# browser, network, system, sensitive. Policy: allow | confirm | deny.
+# allow   -> LOW-risk actions run instantly; MEDIUM+ still ask once.
+# confirm -> every action in this category asks.
+# deny    -> blocked entirely.
+permissions:
+  categories:
+    filesystem: allow
+    terminal: allow
+    applications: allow
+    browser: allow
+    network: allow
+    memory: allow
+    diagnostics: allow
+    system: confirm
+    sensitive: deny
+  critical_always_confirms: true

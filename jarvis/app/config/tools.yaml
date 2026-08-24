@@ -1,0 +1,3 @@
+# Disable specific tools by name.
+tools:
+  disabled: []

@@ -1,0 +1,13 @@
+# JARVIS settings — user overrides. Delete the file to restore defaults.
+# Secrets NEVER go here: models reference environment variable names.
+
+personality:
+  name: JARVIS
+  language_style: auto        # auto | english | hinglish
+
+agent:
+  intent_fast_path: true      # instant local handling of "chrome kholo" style commands
+
+log_level: INFO
+dev:
+  enabled: false

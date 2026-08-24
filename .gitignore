@@ -1,0 +1,34 @@
+# Environment & Secrets (NEVER COMMIT)
+.env
+.env.*
+*.key
+*.enc
+vault.enc
+
+# Virtual Environments & Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+*.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Local data, models, logs
+data/
+logs/
+.local/
+*.zip
+*.tar.gz
+*.sqlite3
+*.db
+
+# OS specific
+.DS_Store
+Thumbs.db
+.sudo_as_admin_successful
+

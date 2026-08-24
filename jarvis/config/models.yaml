@@ -1,0 +1,40 @@
+# Models & roles (Spec §33 model router). PRE-CONFIGURED for Google Gemini —
+# just put your key in .env:  JARVIS_GEMINI_API_KEY=AIza...
+# Add more providers below; keys always live in .env, referenced by env NAME.
+#
+# roles: fast | default | reasoning | vision | coding | local
+ai:
+  models:
+    - id: gemini-3.7-flash
+      provider: gemini
+      api_key_env: JARVIS_GEMINI_API_KEY
+      roles: [fast, default, vision, reasoning, coding]
+  roles:
+    fast: gemini-3.7-flash
+    default: gemini-3.7-flash
+    reasoning: gemini-3.7-flash
+    vision: gemini-3.7-flash
+    coding: gemini-3.7-flash
+  default_role: default
+
+# --- Other providers (uncomment & edit) ------------------------------
+# OpenAI / OpenAI-compatible (Groq, OpenRouter, LM Studio, vLLM...):
+#     - id: gpt-4o-mini
+#       provider: openai_compatible
+#       api_key_env: JARVIS_OPENAI_API_KEY
+#       roles: [fast, default]
+# Custom endpoint example (Groq):
+#     - id: llama-3.3-70b-versatile
+#       provider: openai_compatible
+#       base_url: https://api.groq.com/openai/v1
+#       api_key_env: JARVIS_COMPAT_API_KEY
+#       roles: [fast]
+# Anthropic:
+#     - id: claude-sonnet-4-5
+#       provider: anthropic
+#       api_key_env: JARVIS_ANTHROPIC_API_KEY
+#       roles: [reasoning, coding]
+# Ollama (local, no key):
+#     - id: llama3.1:8b
+#       provider: ollama
+#       roles: [local]

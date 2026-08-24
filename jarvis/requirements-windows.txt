@@ -1,0 +1,29 @@
+# ============================================================
+# Windows-only extras — install ON WINDOWS with:
+#   pip install -r requirements-windows.txt
+# Each group maps to a JARVIS phase; see README status matrix.
+# ============================================================
+
+# --- Computer control (Phase 5) ---
+pywin32>=306            # Win32 API: windows, processes, Start Menu shortcuts, registry App Paths
+pywinauto>=0.6.9        # UI Automation (accessibility tree) — semantic element selection
+
+# --- Voice (Phase 6) ---
+faster-whisper>=1.0     # local STT (English/Hindi), GPU optional
+openwakeword>=0.6       # local wake-word detection ("Jarvis")
+sounddevice>=0.4.6      # microphone capture
+numpy>=1.26
+edge-tts>=6.1           # free natural neural TTS (online); pyttsx3 = offline fallback (bundled with Windows SAPI)
+pyttsx3>=2.90           # offline TTS fallback (Windows SAPI5 voices)
+
+# --- Browser agent (Phase 7) ---
+playwright>=1.44        # run: playwright install chromium
+
+# --- Vision (Phase 8) ---
+mss>=9.0                # fast screenshots
+Pillow>=10.0
+pytesseract>=0.3.10     # OCR — requires Tesseract-OCR binary installed separately:
+                        # https://github.com/UB-Mannheim/tesseract/wiki
+
+# --- GUI + tray (Phase 11) ---
+PySide6>=6.6
