@@ -21,12 +21,21 @@ log = get_logger("voice.transcriber")
 
 
 class VoiceTranscriber:
-    def __init__(self, model_size: str = "base", compute_type: str = "int8") -> None:
+    def __init__(self, model_size: str = "small", compute_type: str = "int8") -> None:
         self.model_size = model_size
         self.compute_type = compute_type
         self._model = None
         self._loading = False
         self._model_dir = get_paths().data / "models" / "whisper"
+
+    @staticmethod
+    def check_availability() -> tuple[bool, str]:
+        """Check if faster-whisper is installed."""
+        try:
+            import faster_whisper  # noqa: F401
+            return True, "faster-whisper is available"
+        except ImportError:
+            return False, "faster-whisper is not installed. Run: pip install faster-whisper"
 
     def _get_model(self):
         """Lazy loader for faster-whisper WhisperModel."""
@@ -70,7 +79,6 @@ class VoiceTranscriber:
             return ""
 
         try:
-            # If numpy array, ensure float32 normalized [-1.0, 1.0]
             if isinstance(audio_data, np.ndarray):
                 if audio_data.ndim > 1:
                     audio_data = audio_data.mean(axis=1)  # convert to mono
@@ -82,12 +90,11 @@ class VoiceTranscriber:
                 segments, info = model.transcribe(
                     audio_data,
                     beam_size=3,
-                    language=None,  # auto-detect language (Hindi / English)
+                    language=None,  # auto-detect language (Hindi / English / Hinglish)
                     vad_filter=True,
-                    vad_parameters=dict(min_silence_duration_ms=500),
+                    vad_parameters=dict(min_silence_duration_ms=400),
                 )
             else:
-                # File path or stream
                 segments, info = model.transcribe(
                     str(audio_data),
                     beam_size=3,

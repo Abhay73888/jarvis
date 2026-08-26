@@ -91,15 +91,21 @@ class AISettings(BaseModel):
 
 
 class VoiceSettings(BaseModel):
+    wake_enabled: bool = True
+    push_to_talk: bool = True
     wake_words: list[str] = Field(default_factory=lambda: ["jarvis", "hey jarvis"])
+    wake_threshold: float = 0.25
     stt_engine: str = "faster-whisper"       # Phase 6
     stt_model: str = "small"
     tts_engine: str = "edge-tts"             # Phase 6
     tts_voice: str = "en-IN-NeerjaNeural"
     voice_gender: str = "female"
-    speak_responses: bool = False
+    speak_responses: bool = True
     tts_rate: str = "+8%"
     language: str = "auto"                   # auto | en | hi | hinglish
+    silence_duration_s: float = 1.2
+    max_record_duration_s: float = 10.0
+    barge_in_enabled: bool = True
 
 
 class GreetingSettings(BaseModel):

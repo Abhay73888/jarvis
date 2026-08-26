@@ -30,11 +30,11 @@ run_python. Written for Windows, executed & verified on Linux equivalents.
 ⬜ pywin32 window management (focus/minimize/move/resize), pywinauto UIA
 element actions, Start Menu re-index on install events.
 
-## Phase 6 — Voice 🔶 (partial)
+## Phase 6 — Voice ✅
 ✅ edge-tts + pyttsx3 TTS abstraction (female voice default `en-IN-NeerjaNeural`, rate `+8%`, offline fallback `pyttsx3` with female voice hints).
 ✅ Time-aware boot greeting with reminder brief (`Good morning/afternoon/evening/Working late, sir`) + Windows Startup batch installation (`python run.py startup install`).
 ✅ Fast streaming responses (SSE `chat_stream` on Gemini & OpenAI-compatible providers, `Topics.RESPONSE_DELTA`, connection reuse with persistent `httpx.AsyncClient`, non-blocking cpu stats).
-⬜ faster-whisper STT + openwakeword local wake word + barge-in interrupt.
+✅ faster-whisper STT (`small` model, auto-detect hi/en/Hinglish) + openwakeword local wake word (`jarvis`/`hey jarvis`) + barge-in interrupt (`stop`/`ruk jao`/`abort`) + global push-to-talk (`Ctrl+Space`) and emergency stop (`Ctrl+Shift+Space`). 15 unit tests green.
 
 
 ## Phase 7 — Browser agent ✅ (live-verified with real Chromium)

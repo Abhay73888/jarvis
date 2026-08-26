@@ -92,6 +92,7 @@ hide it, JARVIS_NO_AGENT_BROWSER=1 to disable).
 | Short-term memory (DB) + working memory (referents) | `app/memory/manager.py` |
 | Conversation persistence, preferences | `app/database/repo.py` |
 | CLI REPL with live status + permission prompts; `doctor`, `init` | `app/cli.py` |
+| **Hands-free Voice Loop**: openwakeword wake word, faster-whisper STT (hi/en/Hinglish), barge-in interrupt, global hotkeys (Ctrl+Space, Ctrl+Shift+Space), neural female TTS | `app/voice/` |
 
 ### 🔶 Written for Windows, verified only on Linux equivalents
 | Capability | Note |
@@ -102,7 +103,6 @@ hide it, JARVIS_NO_AGENT_BROWSER=1 to disable).
 
 ### ⬜ Not built yet (honest TODOs — phases in docs/ROADMAP.md)
 - **Phase 5+**: pywin32 window management (focus/minimize/move/resize), pywinauto UIA clicking/typing
-- **Phase 6**: wake word, STT (faster-whisper hi/en), natural TTS, streaming voice loop
 - **Phase 7 leftovers**: file uploads, persistent login profiles, Playwright download interception
 - **Phase 8**: OCR + vision-model screen understanding (screenshot tool already live)
 - **Phase 9**: memory summarization/ranking, specialized agents

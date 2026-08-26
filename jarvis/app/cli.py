@@ -46,7 +46,7 @@ async def _cli_confirm(request: PermissionRequest) -> str:
         print("     Enter 1, 2 or 3.")
 
 
-async def cmd_cli(dev: bool = False, speak: bool = False) -> int:
+async def cmd_cli(dev: bool = False, speak: bool = False, voice: bool = False) -> int:
     from app.main import build_runtime
 
     rt = await build_runtime(confirm_handler=_cli_confirm)
@@ -64,7 +64,7 @@ async def cmd_cli(dev: bool = False, speak: bool = False) -> int:
         state, detail = payload.get("state"), payload.get("detail")
         icons = {"listening": "🎙", "thinking": "🧠", "working": "⚙️ ", "speaking": "🔊",
                  "idle": "  ", "error": "⚠️ "}
-        if state in ("thinking", "working") and detail and not streaming_state["active"]:
+        if state in ("thinking", "working", "listening") and detail and not streaming_state["active"]:
             print(f"\n  {icons.get(state, '')} {detail} …")
 
     def on_response_delta(topic: str, payload: dict) -> None:
@@ -83,6 +83,34 @@ async def cmd_cli(dev: bool = False, speak: bool = False) -> int:
         + (f"  ({p['duration_ms']} ms)" if dev else "")))
 
     _print_banner()
+
+    # Voice listener setup if --voice is passed
+    voice_listener = None
+    if voice or rt.settings.voice.wake_enabled:
+        try:
+            from app.voice.listener import VoiceListener
+            from app.voice.synthesizer import VoiceSynthesizer
+            from app.voice.transcriber import VoiceTranscriber
+
+            transcriber = VoiceTranscriber(model_size=rt.settings.voice.stt_model)
+            synthesizer = VoiceSynthesizer(
+                voice_name=rt.settings.voice.tts_voice,
+                rate=rt.settings.voice.tts_rate,
+                bus=rt.bus,
+            )
+            voice_listener = VoiceListener(
+                engine=rt.engine,
+                bus=rt.bus,
+                settings=rt.settings,
+                transcriber=transcriber,
+                synthesizer=synthesizer,
+                on_wake_callback=lambda: print("\n🎙️ [Wake Word Detected] Listening for command..."),
+                on_transcript_callback=lambda txt: print(f"\nYou (voice) › {txt}"),
+            )
+            asyncio.create_task(voice_listener.start())
+            print("  🎙️ Hands-free voice active: Say 'Jarvis' or press Ctrl+Space. Ctrl+Shift+Space to Stop.\n")
+        except Exception as exc:
+            print(f"  ⚠ Voice listener could not be started: {exc}\n")
 
     # Time-aware startup greeting
     if rt.settings.greeting.enabled:
@@ -115,6 +143,8 @@ async def cmd_cli(dev: bool = False, speak: bool = False) -> int:
             user_input = await loop.run_in_executor(None, lambda: input("\nYou › "))
         except (EOFError, KeyboardInterrupt):
             print("\n  JARVIS shutting down. Goodbye.")
+            if voice_listener:
+                voice_listener.stop()
             await rt.router.close()
             return 0
         user_input = user_input.strip()
@@ -122,6 +152,8 @@ async def cmd_cli(dev: bool = False, speak: bool = False) -> int:
             continue
         if user_input.lower() in ("exit", "quit", "bye"):
             print("  Goodbye.")
+            if voice_listener:
+                voice_listener.stop()
             await rt.router.close()
             return 0
         if user_input.lower() in ("help", "?"):
@@ -296,3 +328,90 @@ async def cmd_init() -> int:
     print("Next: copy .env.example to .env and add your API key(s),\n"
           "then edit config/models.yaml to point at your provider.")
     return 0
+
+
+async def cmd_voice_test() -> int:
+    """Run comprehensive voice diagnostics, mic test, and STT/TTS check."""
+    import numpy as np
+    from app.voice.state import AudioProcessor
+    from app.voice.synthesizer import VoiceSynthesizer
+    from app.voice.transcriber import VoiceTranscriber
+
+    print("\nJARVIS Voice Diagnostics")
+    print("=" * 60)
+
+    # 1. Microphone check via sounddevice
+    has_mic = False
+    dev_name = "None"
+    try:
+        import sounddevice as sd
+        devices = sd.query_devices()
+        default_in = sd.default.device[0] if sd.default.device else -1
+        if default_in is not None and default_in >= 0 and default_in < len(devices):
+            dev_name = devices[default_in]["name"]
+            has_mic = True
+            print(f"  [✓] Microphone input device   : {dev_name}")
+        else:
+            print("  [✗] Microphone input device   : None found")
+    except Exception as exc:
+        print(f"  [✗] sounddevice / Microphone  : {exc}")
+
+    # 2. Wake word engine check
+    has_wake = False
+    try:
+        import openwakeword
+        from openwakeword.model import Model
+        openwakeword.utils.download_models()
+        model = Model(wakeword_models=["hey_jarvis", "jarvis"], inference_framework="onnx")
+        has_wake = True
+        print(f"  [✓] openwakeword wake engine  : models ready (jarvis, hey_jarvis)")
+    except Exception as exc:
+        print(f"  [!] openwakeword wake engine  : {exc}")
+
+    # 3. STT check
+    stt_ok, stt_msg = VoiceTranscriber.check_availability()
+    print(f"  [{'✓' if stt_ok else '✗'}] faster-whisper STT        : {stt_msg}")
+
+    # 4. TTS check
+    synth = VoiceSynthesizer()
+    print(f"  [✓] TTS output engine         : {synth.voice_name} (edge-tts + pyttsx3 fallback)")
+
+    # 5. Live Audio Capture & VAD Test
+    print("=" * 60)
+    if has_mic:
+        print("  Recording 3-second audio sample to test mic & STT...")
+        try:
+            import sounddevice as sd
+            sample_rate = 16000
+            duration = 3.0
+            print("  🎙️ Speak something now into your microphone...")
+            raw_audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype="float32")
+            sd.wait()
+
+            audio_data = raw_audio[:, 0]
+            raw_rms = AudioProcessor.calculate_rms(audio_data)
+            amplified = AudioProcessor.apply_agc(audio_data)
+            amp_rms = AudioProcessor.calculate_rms(amplified)
+
+            print(f"  [✓] Audio captured            : {len(audio_data)} samples @ 16kHz")
+            print(f"  [✓] Signal energy (RMS)       : Raw={raw_rms:.5f}, AGC Amplified={amp_rms:.5f}")
+
+            if amp_rms < 0.001:
+                print("  ⚠ Low audio signal detected. Speak closer to your microphone or check Windows mic volume.")
+            else:
+                print("  Transcribing test audio...")
+                transcriber = VoiceTranscriber(model_size="small")
+                text = await transcriber.transcribe(amplified)
+                if text:
+                    print(f"  [✓] Transcription output      : \"{text}\"")
+                else:
+                    print("  [i] No speech detected in test audio clip.")
+        except Exception as exc:
+            print(f"  [✗] Mic recording error       : {exc}")
+    else:
+        print("  [!] Microphone not available on this machine. Voice listening will fall back gracefully.")
+
+    print("=" * 60)
+    print("  Test complete.\n")
+    return 0
+

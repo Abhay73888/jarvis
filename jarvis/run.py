@@ -2,9 +2,11 @@
 """JARVIS launcher.
 
     python run.py                     # start Desktop GUI App + Voice Listener
+    python run.py --voice             # start Interactive Text Console + Voice Loop
+    python run.py voice-test          # run Voice & Microphone diagnostics
     python run.py app                 # start Desktop GUI App
     python run.py app --tray          # start minimized in Windows System Tray
-    python run.py cli [--speak]       # interactive text console (with live streaming & TTS)
+    python run.py cli [--speak] [--voice] # interactive text console (with live streaming & TTS)
     python run.py greet [--speak]     # time-aware greeting (used at boot)
     python run.py startup install [--speak] [--console] # install greeting into Windows Startup folder
     python run.py startup remove      # remove startup greeting
@@ -29,11 +31,16 @@ def main() -> int:
     dev = "--dev" in args
     start_in_tray = "--tray" in args
     no_voice = "--no-voice" in args
+    voice = "--voice" in args
     speak = "--speak" in args
     console = "--console" in args
 
     non_flags = [a for a in args if not a.startswith("--")]
-    command = non_flags[0] if non_flags else ("cli" if speak else "app")
+    
+    if voice and not non_flags:
+        command = "cli"
+    else:
+        command = non_flags[0] if non_flags else ("cli" if (speak or voice) else "app")
 
     if command == "init":
         from app.cli import cmd_init
@@ -42,6 +49,10 @@ def main() -> int:
     if command == "doctor":
         from app.cli import cmd_doctor
         return asyncio.run(cmd_doctor())
+
+    if command in ("voice-test", "voicetest"):
+        from app.cli import cmd_voice_test
+        return asyncio.run(cmd_voice_test())
 
     if command == "greet":
         from app.cli import cmd_greet
@@ -54,7 +65,7 @@ def main() -> int:
 
     if command in ("cli", "chat", "console"):
         from app.cli import cmd_cli
-        return asyncio.run(cmd_cli(dev=dev, speak=speak))
+        return asyncio.run(cmd_cli(dev=dev, speak=speak, voice=voice))
 
     if command in ("app", "gui", "ui"):
         from app.ui import run_gui_app
