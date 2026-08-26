@@ -76,7 +76,23 @@ def create_desktop_shortcut():
         desktop_bat.write_text(f'@echo off\ncd /d "{root}"\ncall run.bat app\n', encoding="utf-8")
         print(f"[OK] Created Desktop Batch Launcher: {desktop_bat}")
 
-        # 3. Enable Windows Autostart on Boot
+        # 3. Create silent background VBS launcher on Desktop
+        desktop_vbs = desktop / "JARVIS.vbs"
+        vbs_content = (
+            'Set WshShell = CreateObject("WScript.Shell")\n'
+            'Set FSO = CreateObject("Scripting.FileSystemObject")\n'
+            f'ScriptDir = "{root}"\n'
+            'WshShell.CurrentDirectory = ScriptDir\n'
+            f'VenvPython = ScriptDir & "\\.venv\\Scripts\\pythonw.exe"\n'
+            'If Not FSO.FileExists(VenvPython) Then\n'
+            '    VenvPython = "pythonw.exe"\n'
+            'End If\n'
+            'WshShell.Run """" & VenvPython & """ """ & ScriptDir & "\\run.py"" app", 0, False\n'
+        )
+        desktop_vbs.write_text(vbs_content, encoding="utf-8")
+        print(f"[OK] Created Desktop VBS Launcher: {desktop_vbs}")
+
+        # 4. Enable Windows Autostart on Boot
         ok = enable_autostart(start_in_tray=True)
         if ok:
             print("[OK] Enabled Windows Startup: JARVIS will now auto-start when your laptop boots!")
