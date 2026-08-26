@@ -12,6 +12,7 @@ from PySide6.QtGui import QAction, QColor, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import QMenu, QSystemTrayIcon, QWidget
 
 from app.computer.autostart import disable_autostart, enable_autostart, is_autostart_enabled
+from app.ui.dialogs import SettingsDialog
 from app.ui.theme import COLOR_ACCENT, COLOR_BG
 
 
@@ -41,12 +42,14 @@ class JarvisTrayIcon(QSystemTrayIcon):
     def __init__(
         self,
         parent_window: QWidget,
+        settings=None,
         voice_listener=None,
         on_exit_callback: Optional[Callable[[], None]] = None,
     ) -> None:
         icon = create_tray_icon()
         super().__init__(icon, parent_window)
         self.parent_window = parent_window
+        self.settings = settings
         self.voice_listener = voice_listener
         self.on_exit_callback = on_exit_callback
 
@@ -68,6 +71,11 @@ class JarvisTrayIcon(QSystemTrayIcon):
         self.mute_action.setChecked(False)
         self.mute_action.triggered.connect(self._toggle_voice_mute)
         menu.addAction(self.mute_action)
+
+        if self.settings:
+            settings_action = QAction("Settings...", menu)
+            settings_action.triggered.connect(self._open_settings)
+            menu.addAction(settings_action)
 
         self.autostart_action = QAction("Start with Windows", menu)
         self.autostart_action.setCheckable(True)
@@ -100,6 +108,11 @@ class JarvisTrayIcon(QSystemTrayIcon):
         if self.voice_listener:
             is_muted = self.mute_action.isChecked()
             self.voice_listener.set_muted(is_muted)
+
+    def _open_settings(self) -> None:
+        if self.settings:
+            dlg = SettingsDialog(self.settings, self.parent_window)
+            dlg.exec()
 
     def _toggle_autostart(self) -> None:
         if self.autostart_action.isChecked():

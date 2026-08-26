@@ -15,6 +15,7 @@ from PySide6.QtWidgets import QApplication
 
 from app.core.logging import get_logger
 from app.main import build_runtime
+from app.ui.dialogs import GuiPermissionBridge
 from app.ui.hotkey import GlobalHotkeyThread
 from app.ui.tray import JarvisTrayIcon
 from app.ui.window import MainWindow
@@ -57,8 +58,14 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
     loop_thread = threading.Thread(target=async_loop.run_forever, daemon=True)
     loop_thread.start()
 
-    # Build runtime asynchronously
-    future_runtime = asyncio.run_coroutine_threadsafe(build_runtime(), async_loop)
+    # Pre-create main window dummy container for bridge or full window
+    bridge = GuiPermissionBridge(parent_window=None)
+    confirm_handler = bridge.create_async_handler(async_loop)
+
+    # Build runtime asynchronously with UI permission confirm handler
+    future_runtime = asyncio.run_coroutine_threadsafe(
+        build_runtime(confirm_handler=confirm_handler), async_loop
+    )
     runtime = future_runtime.result(timeout=15.0)
 
     # 2. Initialize Voice Subsystem
@@ -66,10 +73,11 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
     if enable_voice:
         try:
             transcriber = VoiceTranscriber()
-            synthesizer = VoiceSynthesizer()
+            synthesizer = VoiceSynthesizer(bus=runtime.bus)
             voice_listener = VoiceListener(
                 engine=runtime.engine,
                 bus=runtime.bus,
+                settings=runtime.settings,
                 transcriber=transcriber,
                 synthesizer=synthesizer,
             )
@@ -83,9 +91,11 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
     window = MainWindow(
         engine=runtime.engine,
         bus=runtime.bus,
+        settings=runtime.settings,
         voice_listener=voice_listener,
         on_close_to_tray_callback=lambda: window.hide(),
     )
+    bridge.parent_window = window
 
     # 4. Initialize Windows Global Hotkey (Ctrl + Shift + J)
     hotkey_thread: Optional[GlobalHotkeyThread] = None
@@ -100,6 +110,7 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
 
     tray = JarvisTrayIcon(
         parent_window=window,
+        settings=runtime.settings,
         voice_listener=voice_listener,
         on_exit_callback=lambda: _cleanup(async_loop, voice_listener, hotkey_thread, app),
     )

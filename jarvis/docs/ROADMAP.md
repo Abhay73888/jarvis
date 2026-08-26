@@ -63,9 +63,10 @@ Windows Credential Manager for secrets, privacy mode (local-only routing),
 file-content sandboxing review, plugin permission scoping, external audit
 of the injection pipeline.
 
-## Phase 11 — GUI + tray ⬜
-PySide6 dark glass UI (waveform, chat, task status, CPU/RAM, permission
-dialogs), system tray, optional startup entry, global hotkeys (Ctrl+Space).
+## Phase 11 — GUI + tray ✅
+✅ PySide6 dark glass HUD UI (live audio waveform visualizer, streaming chat messages, token-by-token deltas, CPU/RAM telemetry, permission dialogs, settings modal).
+✅ System tray icon with open/hide, voice mute toggle, settings, autostart toggle, and clean exit.
+✅ Non-blocking async event bridge (`GuiPermissionBridge` & `AsyncWorker`), global Windows hotkey `Ctrl+Shift+J`, offscreen GUI test suite (8 tests).
 
 ## Phase 12 — Self-healing & plugins ⬜
 Error classification → safe-fix proposals → retry with caps (Spec §19);

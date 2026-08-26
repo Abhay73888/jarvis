@@ -79,12 +79,14 @@ class MainWindow(QMainWindow):
         self,
         engine: AgentEngine,
         bus: EventBus,
+        settings=None,
         voice_listener=None,
         on_close_to_tray_callback: Optional[Callable[[], None]] = None,
     ) -> None:
         super().__init__()
         self.engine = engine
         self.bus = bus
+        self.settings = settings
         self.voice_listener = voice_listener
         self.on_close_to_tray_callback = on_close_to_tray_callback
 
