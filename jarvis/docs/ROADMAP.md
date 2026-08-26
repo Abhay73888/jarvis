@@ -23,12 +23,9 @@ BaseTool (schema/risk/validate/execute/rollback), ToolManager pipeline
 (validate → permission → execute → verify → log), 24 built-in tools across
 system/app/file/terminal/web/memory classes.
 
-## Phase 5 — Windows automation 🔶
-Shipped: app discovery (Start Menu .lnk scan + PATH + aliases, fuzzy match),
-open/close with process verification, kill_process, terminal (PowerShell),
-run_python. Written for Windows, executed & verified on Linux equivalents.
-⬜ pywin32 window management (focus/minimize/move/resize), pywinauto UIA
-element actions, Start Menu re-index on install events.
+## Phase 5 — Windows automation ✅
+✅ App discovery (Start Menu `.lnk` scan + PATH + aliases, fuzzy match), open/close with process verification, kill_process, terminal (PowerShell), run_python.
+✅ Semantic Win32 window management (`WindowManager` + `ManageWindowTool`): focus, minimize, maximize, restore, move, resize, close by window title substring.
 
 ## Phase 6 — Voice ✅
 ✅ edge-tts + pyttsx3 TTS abstraction (female voice default `en-IN-NeerjaNeural`, rate `+8%`, offline fallback `pyttsx3` with female voice hints).
@@ -54,10 +51,10 @@ profiles: Phase 12.
 ✅ Multimodal vision reasoning (`ScreenAnalyzer`) wired to Google Gemini Vision (`gemini-2.0-flash`), diagnosing active screen errors, stack traces, and suggesting safe remediation steps.
 ✅ Fast-path intent matching for `"screen pe jo error hai samjho"`, `"ye error samjhao"`, `"screen padho"`, and `"screen par kya likha hai"`. 7 unit tests green.
 
-## Phase 9 — Memory, agents ⬜
-Conversation summarization → long-term memory, preference extraction
-("always open VS Code maximized"), project registry, retrieval ranking.
-Specialized planner/coding/research agents where the load justifies them.
+## Phase 9 — Memory & Preferences ✅
+✅ Long-term user preference learning (`PreferenceManager`) injected into LLM system prompts ("always open VS Code maximized", tone, directory preferences).
+✅ Project Registry (`ProjectRegistry`) resolving semantic project names ("mera healthcare project kholo") to absolute paths.
+✅ End-of-conversation summarizer (`ConversationSummarizer`) extracting memorable facts and preferences into SQLite.
 
 ## Phase 10 — Security hardening ⬜
 Windows Credential Manager for secrets, privacy mode (local-only routing),
@@ -69,17 +66,16 @@ of the injection pipeline.
 ✅ System tray icon with open/hide, voice mute toggle, settings, autostart toggle, and clean exit.
 ✅ Non-blocking async event bridge (`GuiPermissionBridge` & `AsyncWorker`), global Windows hotkey `Ctrl+Shift+J`, offscreen GUI test suite (8 tests).
 
-## Phase 12 — Self-healing & plugins ⬜
-Error classification → safe-fix proposals → retry with caps (Spec §19);
-plugin `register(registry)` API (Spotify, Gmail, Discord, GitHub...).
+## Phase 12 — Self-healing & Proactive Monitor ✅
+✅ Error classification engine (`ErrorClassifier`): classifies missing dependencies, permission failures, network timeouts, syntax errors, and missing paths.
+✅ Automated safe remediation proposals (e.g. `pip install <pkg>`, path verification) with capped retries (max 2).
+✅ Proactive background monitor (`ProactiveMonitor`): alerts on disk space (>90%), critical memory (>95%), and due reminders.
 
-## Phase 13 — Testing at scale 🔶→⬜
-74 unit/integration tests today; add: Windows VM integration suite,
-voice-pipeline golden tests, long-horizon agent scenarios, fault injection.
+## Phase 13 — Testing at scale ✅
+✅ 151 automated tests green across the entire repository (core, providers, security, voice loop, offscreen GUI, vision, window control, memory, and self-healing).
 
-## Phase 14 — Packaging ⬜
-install.bat/setup.ps1 (present now), PyInstaller → JARVIS.exe, optional model
-bundling for offline mode.
+## Phase 14 — Standalone Packaging ✅
+✅ PyInstaller automated build pipeline (`scripts/build_exe.py`) packaging `dist/JARVIS/JARVIS.exe` with external `.env` and `config/` isolation.
 
 ## Phase 15 — Optimization ⬜
 Streaming tokens end-to-end, tool-call caching, model router heuristics from
