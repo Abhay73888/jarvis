@@ -40,38 +40,41 @@ spec in `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`.
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate   |   macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-windows.txt
 python run.py init          # writes config/*.yaml + .env template guidance
 python run.py doctor        # environment diagnostics
-pytest -q                   # MUST end with "95 passed" (or more if you added)
+pytest -q                   # MUST end with "151 passed"
 ```
 
 Optional (browser agent): `pip install playwright && playwright install chromium`
-On Windows additionally: `pip install -r requirements-windows.txt`
 
-To talk to JARVIS: `python run.py` (console REPL). Without a provider key it
-runs the offline fast-path honestly; add `JARVIS_GEMINI_API_KEY=...` to `.env`
-for full reasoning (Gemini is pre-configured in `config/models.yaml`).
+To talk to JARVIS:
+- Desktop HUD GUI & Voice: `run.bat app` (or `python run.py app`)
+- Interactive CLI: `python run.py --speak --voice`
+- Diagnostics: `python run.py doctor` / `python run.py voice-test`
 
 ## Architecture map (where things live)
 
 ```
-run.py                 launcher (cli | init | doctor)
+run.py                 launcher (cli | app | init | doctor | voice-test | startup)
 app/main.py            composition root — build_runtime()
 app/core/              EventBus, redacting JSON logs, exceptions
 app/config/settings.py typed settings; YAML + ${ENV} interpolation; .env loader
-app/security/          risk classifier, secret redaction, injection defense
+app/security/          risk classifier, secret redaction, injection defense, DPAPI vault, sandbox
 app/permissions/       decision matrix + confirm flow (UI installs a handler)
 app/brain/             providers (OpenAI-compat/Anthropic/Gemini/Ollama),
-                       ModelRouter, intent fast-path (EN/HI/Hinglish), AgentEngine
+                       ModelRouter, intent fast-path (EN/HI/Hinglish), AgentEngine, self-healing
 app/tools/             BaseTool + ToolManager pipeline + builtin/ tools
 app/browser/           PlaywrightDriver — semantic refs, verified actions
-app/computer/          app discovery (Start Menu / PATH / aliases)
-app/memory/            short-term (DB) + working memory (referents)
+app/computer/          app discovery, window control (pywin32), proactive monitor, autostart
+app/voice/             wake-word (openwakeword), faster-whisper STT, neural TTS, barge-in, hotkeys
+app/vision/            mss screen capture, pytesseract OCR (eng+hin), Gemini multimodal vision
+app/ui/                PySide6 dark-glass HUD, animated orb visualizer, tray, permission dialogs
+app/memory/            short-term (DB), working memory, summarizer, project registry, preferences
 app/database/          SQLAlchemy async models + repos (SQLite)
-app/voice|vision|ui|agents|plugins/   honest stubs — future phases
-tests/                 pytest suite incl. real-Chromium browser tests
+tests/                 pytest suite (151 tests: core, voice, offscreen GUI, vision, window control, memory)
 docs/                  ARCHITECTURE / ROADMAP / SECURITY / WINDOWS-NOTES
+scripts/               build_exe.py (standalone PyInstaller builder)
 ```
 
 Key invariants:
@@ -93,26 +96,17 @@ Key invariants:
   `tests/fixtures/` via an ephemeral HTTP server (see `tests/test_browser.py`).
   Live-web checks are for manual smoke tests, not the suite.
 
-## What to build next (priority order)
+## What has landed (Completed Stages)
 
-1. **Phase 6 — Voice**: openwakeword (local wake word), faster-whisper STT
-   (hi/en/Hinglish auto-detect), TTS abstraction (edge-tts + pyttsx3 offline
-   fallback), streaming responses, barge-in interrupt. Audio code is
-   Windows/WASAPI — write it platform-guarded, test the non-audio logic
-   (chunking, state machine, config), mark hardware paths for on-device
-   verification.
-2. **Phase 11 — GUI + tray** (PySide6): subscribe to existing EventBus topics
-   (status, tool.finished, permission.requested); permission dialogs install
-   the confirm handler. Dark glass theme, waveform, task status, CPU/RAM.
-3. **Phase 8 — Vision**: mss screenshots (tool exists) + pytesseract OCR +
-   vision-model reasoning via the `vision` model role.
-4. **Phase 12 — Self-healing + plugins**: error classification → safe-fix
-   proposals → capped retries; plugin `register(registry)` API.
+1. **Stage 1 — Hands-Free Voice Loop**: openwakeword (local wake word "jarvis"/"hey jarvis"), faster-whisper STT (hi/en/Hinglish auto-detect), neural TTS (`edge-tts` with `pyttsx3` offline fallback), streaming responses, barge-in interrupt, global hotkeys (`Ctrl+Space`, `Ctrl+Shift+Space`).
+2. **Stage 2 — God-Level GUI + System Tray**: PySide6 dark-glass HUD UI, live animated orb visualizer, system telemetry (CPU/RAM/Battery), interactive permission dialogs, system tray with background listening.
+3. **Stage 3 — Screen Vision & OCR**: mss screen capture, pytesseract OCR (eng+hin) with untrusted prompt-injection fencing, Gemini Vision multimodal reasoning for error diagnostics and remediation.
+4. **Stage 4 — Superpowers & Hardening**:
+   - Window control (pywin32): semantic focus, minimize, maximize, restore, resize, close.
+   - Long-term memory & preferences: user preferences injected into prompts, project registry, conversation summarization.
+   - Self-healing: error classification engine, automated safe remediation proposals, capped retries.
+   - Proactive monitor: disk space (>90%), memory (>95%), due reminders.
+   - Packaging: PyInstaller onedir standalone distribution (`JARVIS.exe`).
+   - Security: Windows DPAPI vault, zero-trust sandbox, emergency lockdown, HMAC audit ledger.
 
-Update `docs/ROADMAP.md` and the README status matrix when a phase lands.
-
-## Windows verification backlog (needs a real Windows PC)
-
-Items marked 🔶 in README: Start Menu `.lnk` scan, `os.startfile` launch,
-`taskkill` close, PowerShell terminal tool, headed Playwright browser.
-Verify manually, then flip 🔶 → ✅ in README with evidence.
+Update `docs/ROADMAP.md` and the README status matrix when new capabilities land.
