@@ -50,6 +50,7 @@ class ChatMessage:
     tool_calls: list[ToolCall] = field(default_factory=list)
     tool_call_id: str | None = None
     name: str | None = None
+    images: list[tuple[str, str]] = field(default_factory=list)  # (base64_data, mime_type)
 
 
 class LLMProvider(ABC):

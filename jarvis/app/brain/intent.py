@@ -69,6 +69,13 @@ _PROCESSES = re.compile(r"\b(kaun\s?kaun\s?se|which|what|running|chal\s?rahe|cha
 _SCREENSHOT = re.compile(r"\b(screenshot|screen\s+shot|screen\s+capture)\b.*\b(lo|lena|le|take|capture|click)\b"
                          r"|^(take|le|lena|lo)\b.*\b(screenshot|screen\s+shot)\b$"
                          r"|^screenshot$", re.I)
+_ANALYZE_SCREEN = re.compile(
+    r"\b(screen|ye|yeh|is)\s*(?:pe|par)?\s*(?:jo\s+)?(?:error|problem|dikkat|issue|warning)\s*(?:hai\s+)?(?:samjho|samjhao|batao|explain|analyze|fix)\b"
+    r"|\b(explain|analyze|diagnose|samjhao|samjho)\s*(?:this|the|my)?\s*(?:error|screen|issue)\b"
+    r"|\b(screen|display)\s*(?:ko\s+)?(?:analyze|diagnose|check)\s*(?:karo|kar|do)?\b", re.I)
+_READ_SCREEN = re.compile(
+    r"\b(screen|display)\s*(?:pe|par)?\s*(?:kya\s+)?(?:likha\s+hai|padho|padh\s+lo|read|extract)\b"
+    r"|\b(read|extract|padho)\s*(?:the\s+)?(?:screen|text)\b", re.I)
 _TIME = re.compile(r"\b(time|samay|baje|baja)\b.*\b(kya|kitne|what|how\s+much|bolo|batao|tell)\b"
                    r"|^(what('| i)?s\s+the\s+time|time\s+ky[aa]\s+hua|kitne\s+baje\s+hain)$", re.I)
 _DATE = re.compile(r"\b(date|tareekh|din)\b.*\b(kya|what|aaj|today|bolo|batao)\b|aaj\s+(?:ki\s+)?(?:date|tareekh)", re.I)
@@ -121,6 +128,12 @@ class IntentRouter:
 
         if _SYSINFO.search(clean) or _RAM.search(clean) or _CPU.search(clean) or _BATTERY.search(clean):
             return Intent(tool="system_info", speech="Checking the system.")
+
+        if _ANALYZE_SCREEN.search(clean):
+            return Intent(tool="analyze_screen", args={"query": clean}, speech="Analyzing the screen.")
+
+        if _READ_SCREEN.search(clean):
+            return Intent(tool="read_screen", args={}, speech="Reading the screen.")
 
         if _SCREENSHOT.search(clean):
             return Intent(tool="screenshot", speech="Taking a screenshot.")

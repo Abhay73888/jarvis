@@ -48,10 +48,11 @@ deterministically against local fixtures (12 browser tests). On Windows the
 agent browser runs HEADED so you watch it work. Uploads & persistent login
 profiles: Phase 12.
 
-## Phase 8 — Vision ⬜
-mss screenshots (tool exists), pytesseract OCR, window/UI detection,
-vision-model reasoning via the `vision` model role. "Screen pe jo error hai
-samjho" flow.
+## Phase 8 — Vision ✅
+✅ Screen capture via `mss` / Pillow with local file stamping.
+✅ Pytesseract OCR with English + Hindi auto-detection and prompt-injection fencing (`fence_untrusted`).
+✅ Multimodal vision reasoning (`ScreenAnalyzer`) wired to Google Gemini Vision (`gemini-2.0-flash`), diagnosing active screen errors, stack traces, and suggesting safe remediation steps.
+✅ Fast-path intent matching for `"screen pe jo error hai samjho"`, `"ye error samjhao"`, `"screen padho"`, and `"screen par kya likha hai"`. 7 unit tests green.
 
 ## Phase 9 — Memory, agents ⬜
 Conversation summarization → long-term memory, preference extraction

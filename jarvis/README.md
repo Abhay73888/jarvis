@@ -94,6 +94,7 @@ hide it, JARVIS_NO_AGENT_BROWSER=1 to disable).
 | CLI REPL with live status + permission prompts; `doctor`, `init` | `app/cli.py` |
 | **Hands-free Voice Loop**: openwakeword wake word, faster-whisper STT (hi/en/Hinglish), barge-in interrupt, global hotkeys (Ctrl+Space, Ctrl+Shift+Space), neural female TTS | `app/voice/` |
 | **Desktop HUD GUI & System Tray**: PySide6 dark-glass UI, live audio waveform, token streaming, interactive permission dialogs, settings modal, `Ctrl+Shift+J` hotkey | `app/ui/` |
+| **Screen Vision & OCR**: mss capture, pytesseract OCR (eng+hin) with prompt-injection fencing, multimodal error diagnostics via Gemini Vision | `app/vision/`, `app/tools/builtin/vision.py` |
 
 ### 🔶 Written for Windows, verified only on Linux equivalents
 | Capability | Note |
@@ -105,7 +106,6 @@ hide it, JARVIS_NO_AGENT_BROWSER=1 to disable).
 ### ⬜ Not built yet (honest TODOs — phases in docs/ROADMAP.md)
 - **Phase 5+**: pywin32 window management (focus/minimize/move/resize), pywinauto UIA clicking/typing
 - **Phase 7 leftovers**: file uploads, persistent login profiles, Playwright download interception
-- **Phase 8**: OCR + vision-model screen understanding (screenshot tool already live)
 - **Phase 9**: memory summarization/ranking, specialized agents
 - **Phase 10**: Windows Credential Manager secret store, privacy mode
 - **Phase 12**: self-healing retries with error classification, plugin API

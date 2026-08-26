@@ -50,8 +50,13 @@ class GeminiProvider(LLMProvider):
                     for c in msg.tool_calls]
                 contents.append({"role": "model", "parts": parts})
             else:
+                parts = []
+                if hasattr(msg, "images") and msg.images:
+                    for img_b64, mime in msg.images:
+                        parts.append({"inlineData": {"mimeType": mime, "data": img_b64}})
+                parts.append({"text": msg.content or " "})
                 contents.append({"role": "user" if msg.role == "user" else "model",
-                                 "parts": [{"text": msg.content or " "}]})
+                                 "parts": parts})
 
         gen_config: dict[str, Any] = {
             "temperature": temperature,

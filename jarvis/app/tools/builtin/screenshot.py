@@ -64,6 +64,7 @@ def register_all(registry) -> None:  # pragma: no cover — wiring helper
     from app.tools.builtin.memory_tools import ListTasksTool, RecallTool, RememberTool, SetReminderTool
     from app.tools.builtin.system import KillProcessTool, ProcessListTool, SystemInfoTool
     from app.tools.builtin.terminal import RunPythonTool, TerminalExecuteTool
+    from app.tools.builtin.vision import AnalyzeScreenTool, ReadScreenTool
     from app.tools.builtin.web import FetchUrlTool, OpenUrlTool, WebSearchTool
     for tool in (
         SystemInfoTool(), ProcessListTool(), KillProcessTool(),
@@ -73,7 +74,7 @@ def register_all(registry) -> None:  # pragma: no cover — wiring helper
         CompressTool(), ExtractTool(), OpenPathTool(),
         TerminalExecuteTool(), RunPythonTool(),
         OpenUrlTool(), WebSearchTool(), FetchUrlTool(),
-        ScreenshotTool(),
+        ScreenshotTool(), AnalyzeScreenTool(), ReadScreenTool(),
         RememberTool(), RecallTool(), SetReminderTool(), ListTasksTool(),
     ):
         registry.register(tool)
