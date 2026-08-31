@@ -56,15 +56,17 @@ profiles: Phase 12.
 ✅ Project Registry (`ProjectRegistry`) resolving semantic project names ("mera healthcare project kholo") to absolute paths.
 ✅ End-of-conversation summarizer (`ConversationSummarizer`) extracting memorable facts and preferences into SQLite.
 
-## Phase 10 — Security hardening ⬜
-Windows Credential Manager for secrets, privacy mode (local-only routing),
-file-content sandboxing review, plugin permission scoping, external audit
-of the injection pipeline.
+## Phase 10 — Security hardening ✅
+✅ Windows DPAPI vault (`DPAPIVault`) & hardware credential encryption.
+✅ Zero-Trust Anti-Malware sandbox (`AntiMalwareSandbox`) intercepting OS wipes and ransomware cradles.
+✅ Emergency Protocol Zero (`LockdownManager`) with workstation locking and volatile data purge.
+✅ Anti-Prompt Injection 2.0 (`injection.py`) and HMAC-SHA256 chained audit ledger (`AuditLedger`).
+✅ Privacy Mode: Enforce local-only routing with zero external network attempts.
 
 ## Phase 11 — GUI + tray ✅
-✅ PySide6 dark glass HUD UI (live audio waveform visualizer, streaming chat messages, token-by-token deltas, CPU/RAM telemetry, permission dialogs, settings modal).
+✅ PySide6 dark glass HUD UI (live audio waveform visualizer, streaming chat messages, token-by-token deltas, CPU/RAM telemetry, permission dialogs, settings modal, Synapse Matrix, Protocol Matrix).
 ✅ System tray icon with open/hide, voice mute toggle, settings, autostart toggle, and clean exit.
-✅ Non-blocking async event bridge (`GuiPermissionBridge` & `AsyncWorker`), global Windows hotkey `Ctrl+Shift+J`, offscreen GUI test suite (8 tests).
+✅ Non-blocking async event bridge (`GuiPermissionBridge` & `AsyncWorker`), global Windows hotkeys, offscreen GUI test suite (8 tests).
 
 ## Phase 12 — Self-healing & Proactive Monitor ✅
 ✅ Error classification engine (`ErrorClassifier`): classifies missing dependencies, permission failures, network timeouts, syntax errors, and missing paths.
@@ -72,11 +74,14 @@ of the injection pipeline.
 ✅ Proactive background monitor (`ProactiveMonitor`): alerts on disk space (>90%), critical memory (>95%), and due reminders.
 
 ## Phase 13 — Testing at scale ✅
-✅ 151 automated tests green across the entire repository (core, providers, security, voice loop, offscreen GUI, vision, window control, memory, and self-healing).
+✅ 171 automated tests green across the entire repository (core, providers, security, voice loop socket-blocked, offscreen GUI, vision, window control, memory, self-healing, offline pack, boot companion, superpowers).
 
 ## Phase 14 — Standalone Packaging ✅
 ✅ PyInstaller automated build pipeline (`scripts/build_exe.py`) packaging `dist/JARVIS/JARVIS.exe` with external `.env` and `config/` isolation.
 
-## Phase 15 — Optimization ⬜
-Streaming tokens end-to-end, tool-call caching, model router heuristics from
-observed latencies, startup time budget.
+## Phase 15 — 100% Offline Operating Layer (Stages O1–O5 / v0.6.0-offline) ✅
+✅ **Stage O1 (One-Time Offline Pack)**: `python run.py offline-setup` (RAM-sized model recommendations: 4GB/8GB/16GB+) + `python run.py offline-verify` (10s self-test table).
+✅ **Stage O2 (Offline Voice Loop)**: `openwakeword` continuous listening, `faster-whisper` int8 STT, `Piper` neural female voices with sentence streaming and instant barge-in interrupt. Socket-blocked verified.
+✅ **Stage O3 (Offline Brain)**: Hybrid Router with automatic mid-conversation failover to local Ollama (`qwen2.5` / `gemma3` / `llama3.1`), compact system prompts, and Privacy Mode.
+✅ **Stage O4 (Boot Companion & Daily Brief)**: Spoken brief in <3s post-login, local SQLite tasks companion (`TaskRepo`), offline-honest status reporting.
+✅ **Stage O5 (Maximum Offline Superpowers)**: Full offline tool audit (`offline: true` attributes), dictation mode, local knowledge Q&A, static unit conversions & productivity suite.

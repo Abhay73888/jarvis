@@ -88,8 +88,14 @@ _FINDFILE = re.compile(
     r"(?i)(?:find|search|dhundo|dhoondo|khojo|locate)\s+(?:my\s+|meri\s+|mere\s+)?(.+?)(?:\s*(?:file|files|pdf|pdfs|document|documents), re.I)?$"
     r"|(.+?)\s*(?:file|files|pdf|pdfs|document|documents)?\s+(?:dhundo|dhoondo|khojo)$")
 _REMINDER = re.compile(r"(?:reminder|yaad)\s*(?:set\s*karo|set\s+kar[oa]|dilana|dila\s?do|set)?\s*[:]?\s*(.+)?$", re.I)
+_TASK_LIST = re.compile(r"\b(mere\s+tasks?\s+batao|aaj\s+ke\s+tasks?|kal\s+ke\s+tasks?|pending\s+tasks?|tasks?\s+dikhao|tasks?\s+list|show\s+(?:my\s+)?tasks?|list\s+tasks?)\b", re.I)
+_TASK_ADD = re.compile(r"(?:naya\s+task|task\s+add|add\s+task|new\s+task)\s*[:]?\s*(.+)", re.I)
+_TASK_COMPLETE = re.compile(r"\b(ye\s+complete\s+ho\s+gaya|task\s+complete\s+karo|mark\s+(?:as\s+)?done|mark\s+task\s+complete|task\s+khatam\s+ho\s+gaya)\b", re.I)
+_TASK_SNOOZE = re.compile(r"\b(?:snooze|(\d+)\s*minute\s+baad\s+yaad\s+dila|baad\s+me\s+yaad\s+dila)\b", re.I)
+_TASK_REVIEW = re.compile(r"\b(aaj\s+kya\s+hua|end\s+of\s+day\s+review|daily\s+review|morning\s+brief|daily\s+brief|aaj\s+ka\s+brief)\b", re.I)
 _STOP = re.compile(r"^(stop|stop\s*it|cancel|abort|ruk\s*jao|ruko|band\s+karo|khatam\s*karo)$", re.I)
 _LOCKDOWN = re.compile(r"\b(protocol\s+zero|code\s+red|emergency\s+lockdown|lockdown|lock\s+(?:the\s+)?(?:pc|laptop|screen|computer)|screen\s+lock|lock\s+karo)\b", re.I)
+
 
 
 
@@ -227,6 +233,32 @@ class IntentRouter:
                 return Intent(tool="create_folder", args={"path": path},
                               speech=f"Creating folder '{name}'.")
 
+        # Task companion intents
+        if _TASK_LIST.search(clean):
+            return Intent(tool="manage_tasks", args={"action": "list"}, speech="Aapke tasks check kar raha hoon.")
+
+        task_add = _TASK_ADD.search(clean)
+        if task_add:
+            raw_title = task_add.group(1).strip()
+            return Intent(tool="manage_tasks", args={"action": "add", "title": raw_title}, speech="Task add kar raha hoon.")
+
+        if _TASK_COMPLETE.search(clean):
+            return Intent(tool="manage_tasks", args={"action": "complete"}, speech="Task update kar raha hoon.")
+
+        task_snooze = _TASK_SNOOZE.search(clean)
+        if task_snooze:
+            mins = 10
+            if task_snooze.group(1):
+                try:
+                    mins = int(task_snooze.group(1))
+                except Exception:
+                    mins = 10
+            return Intent(tool="manage_tasks", args={"action": "snooze", "snooze_minutes": mins}, speech=f"{mins} minute ke liye snooze kar raha hoon.")
+
+        if _TASK_REVIEW.search(clean):
+            act = "daily_brief" if "brief" in clean.lower() else "daily_review"
+            return Intent(tool="manage_tasks", args={"action": act}, speech="Review report taiyar kar raha hoon.")
+
         reminder = _REMINDER.search(clean)
         if reminder and re.search(r"(?i)(list|show|dikhao|batao)\b.*\b(reminders?|tasks?|to-?do)", clean):
             return Intent(tool="list_reminders", args={}, speech="Here are your reminders.")
@@ -245,6 +277,7 @@ class IntentRouter:
                               speech="Setting a reminder.")
             self.pending = Intent(tool="set_reminder", args={}, missing="title")
             return Intent(tool="__ask__", args={"text": "What should I remind you about?"})
+
 
         find = _FINDFILE.search(clean)
         if find and re.search(r"(?i)(file|pdf|document|resume|project|folder)", clean):

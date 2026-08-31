@@ -42,6 +42,7 @@ class BaseTool(ABC):
     category: ClassVar[str] = "system"
     risk: ClassVar[RiskLevel] = RiskLevel.LOW
     destructive: ClassVar[bool] = False
+    offline: ClassVar[bool] = True                    # True if tool works 100% offline
 
     def validate(self, args: dict[str, Any]) -> dict[str, Any]:
         try:
@@ -56,8 +57,11 @@ class BaseTool(ABC):
         return {
             "name": self.name,
             "description": self.description,
+            "category": self.category,
+            "offline": self.offline,
             "parameters": self.args_model.model_json_schema(),
         }
+
 
     @abstractmethod
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult: ...

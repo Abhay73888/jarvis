@@ -82,86 +82,108 @@ class GeminiProvider(LLMProvider):
                    temperature: float = 0.3, max_tokens: int = 1024) -> ChatResponse:
         key = self._require_key()
         payload = self._build_payload(messages, tools, temperature, max_tokens)
-        url = f"{_BASE}/models/{self.model}:generateContent"
+        candidate_models = [self.model]
+        for fb in ("gemini-3.6-flash", "gemini-2.5-flash", "gemini-3.1-flash-lite"):
+            if fb not in candidate_models:
+                candidate_models.append(fb)
+
         client = self._get_client()
+        last_exc: Exception | None = None
 
-        try:
-            resp = await client.post(url, json=payload,
-                                     headers={"x-goog-api-key": key,
-                                              "Content-Type": "application/json"})
-        except httpx.HTTPError as exc:
-            raise ProviderError("I couldn't reach Google Gemini. Check your connection.",
-                                detail=str(exc)) from exc
+        for model_name in candidate_models:
+            url = f"{_BASE}/models/{model_name}:generateContent"
+            try:
+                resp = await client.post(url, json=payload,
+                                         headers={"x-goog-api-key": key,
+                                                  "Content-Type": "application/json"})
+                if resp.status_code in (401, 403):
+                    raise ProviderError("Gemini rejected the API key — check .env.",
+                                        detail=f"status {resp.status_code}", status_code=resp.status_code)
+                if resp.status_code in (404, 503) and model_name != candidate_models[-1]:
+                    continue  # try next fallback model
+                if resp.status_code >= 400:
+                    raise ProviderError(f"Gemini returned an error ({resp.status_code}).",
+                                        detail=resp.text[:500], status_code=resp.status_code)
 
-        if resp.status_code in (401, 403):
-            raise ProviderError("Gemini rejected the API key — check .env.",
-                                detail=f"status {resp.status_code}", status_code=resp.status_code)
-        if resp.status_code >= 400:
-            raise ProviderError(f"Gemini returned an error ({resp.status_code}).",
-                                detail=resp.text[:500], status_code=resp.status_code)
+                data = resp.json()
+                content = ""
+                tool_calls: list[ToolCall] = []
+                for part in _parts(data):
+                    if "text" in part:
+                        content += part["text"]
+                    elif "functionCall" in part:
+                        call = part["functionCall"]
+                        tool_calls.append(ToolCall(id=f"call_{len(tool_calls)}",
+                                                   name=call.get("name", ""),
+                                                   arguments=call.get("args") or {}))
+                return ChatResponse(content=content, tool_calls=tool_calls, model=model_name)
+            except httpx.HTTPError as exc:
+                last_exc = exc
+                continue
 
-        data = resp.json()
-        content = ""
-        tool_calls: list[ToolCall] = []
-        for part in _parts(data):
-            if "text" in part:
-                content += part["text"]
-            elif "functionCall" in part:
-                call = part["functionCall"]
-                tool_calls.append(ToolCall(id=f"call_{len(tool_calls)}",
-                                           name=call.get("name", ""),
-                                           arguments=call.get("args") or {}))
-        return ChatResponse(content=content, tool_calls=tool_calls, model=self.model)
+        raise ProviderError("I couldn't reach Google Gemini. Check your connection.",
+                            detail=str(last_exc) if last_exc else "")
 
     async def chat_stream(self, messages: list[ChatMessage], tools: list[dict[str, Any]] | None = None,
                           temperature: float = 0.3, max_tokens: int = 1024) -> AsyncIterator[StreamEvent]:
         key = self._require_key()
         payload = self._build_payload(messages, tools, temperature, max_tokens)
-        url = f"{_BASE}/models/{self.model}:streamGenerateContent?alt=sse"
+        candidate_models = [self.model]
+        for fb in ("gemini-3.6-flash", "gemini-2.5-flash", "gemini-3.1-flash-lite"):
+            if fb not in candidate_models:
+                candidate_models.append(fb)
+
         client = self._get_client()
 
-        try:
-            async with client.stream("POST", url, json=payload,
-                                     headers={"x-goog-api-key": key,
-                                              "Content-Type": "application/json"}) as resp:
-                if resp.status_code in (401, 403):
-                    raise ProviderError("Gemini rejected the API key — check .env.",
-                                        detail=f"status {resp.status_code}", status_code=resp.status_code)
-                if resp.status_code >= 400:
-                    err_body = await resp.aread()
-                    raise ProviderError(f"Gemini returned an error ({resp.status_code}).",
-                                        detail=err_body.decode(errors="replace")[:500], status_code=resp.status_code)
+        for model_name in candidate_models:
+            url = f"{_BASE}/models/{model_name}:streamGenerateContent?alt=sse"
+            try:
+                async with client.stream("POST", url, json=payload,
+                                         headers={"x-goog-api-key": key,
+                                                  "Content-Type": "application/json"}) as resp:
+                    if resp.status_code in (401, 403):
+                        raise ProviderError("Gemini rejected the API key — check .env.",
+                                            detail=f"status {resp.status_code}", status_code=resp.status_code)
+                    if resp.status_code in (404, 503) and model_name != candidate_models[-1]:
+                        continue  # Try next candidate
+                    if resp.status_code >= 400:
+                        err_body = await resp.aread()
+                        raise ProviderError(f"Gemini returned an error ({resp.status_code}).",
+                                            detail=err_body.decode(errors="replace")[:500], status_code=resp.status_code)
 
-                content = ""
-                tool_calls: list[ToolCall] = []
+                    content = ""
+                    tool_calls: list[ToolCall] = []
 
-                async for line in resp.aiter_lines():
-                    line = line.strip()
-                    if not line or not line.startswith("data: "):
-                        continue
-                    json_str = line[6:].strip()
-                    if not json_str:
-                        continue
-                    try:
-                        data = json.loads(json_str)
-                    except json.JSONDecodeError:
-                        continue
+                    async for line in resp.aiter_lines():
+                        line = line.strip()
+                        if not line or not line.startswith("data: "):
+                            continue
+                        json_str = line[6:].strip()
+                        if not json_str:
+                            continue
+                        try:
+                            data = json.loads(json_str)
+                        except json.JSONDecodeError:
+                            continue
 
-                    for part in _parts(data):
-                        if "text" in part:
-                            delta = part["text"]
-                            content += delta
-                            yield StreamEvent(text=delta)
-                        elif "functionCall" in part:
-                            call = part["functionCall"]
-                            tool_calls.append(ToolCall(id=f"call_{len(tool_calls)}",
-                                                       name=call.get("name", ""),
-                                                       arguments=call.get("args") or {}))
+                        for part in _parts(data):
+                            if "text" in part:
+                                delta = part["text"]
+                                content += delta
+                                yield StreamEvent(text=delta)
+                            elif "functionCall" in part:
+                                call = part["functionCall"]
+                                tool_calls.append(ToolCall(id=f"call_{len(tool_calls)}",
+                                                           name=call.get("name", ""),
+                                                           arguments=call.get("args") or {}))
 
-                yield StreamEvent(response=ChatResponse(content=content, tool_calls=tool_calls, model=self.model))
-        except httpx.HTTPError as exc:
-            raise ProviderError("I couldn't reach Google Gemini. Check your connection.",
-                                detail=str(exc)) from exc
+                    yield StreamEvent(response=ChatResponse(content=content, tool_calls=tool_calls, model=model_name))
+                    return
+            except httpx.HTTPError as exc:
+                if model_name == candidate_models[-1]:
+                    raise ProviderError("I couldn't reach Google Gemini. Check your connection.",
+                                        detail=str(exc)) from exc
+                continue
 
 
 def _parts(data: dict[str, Any]) -> list[dict[str, Any]]:

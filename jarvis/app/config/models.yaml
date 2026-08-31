@@ -4,18 +4,15 @@
 # roles: fast | default | reasoning | vision | coding | local
 ai:
   models:
-    - id: gemini-3.5-flash
+    - id: gemini-3.6-flash
       provider: gemini
       api_key_env: JARVIS_GEMINI_API_KEY
-      roles: [fast, default, vision]
-    - id: gemini-3.7-flash
-      provider: gemini
-      api_key_env: JARVIS_GEMINI_API_KEY
-      roles: [reasoning, coding]
+      roles: [fast, default, vision, reasoning, coding]
   roles:
-    fast: gemini-3.5-flash
-    default: gemini-3.5-flash
-    vision: gemini-3.5-flash
-    reasoning: gemini-3.7-flash
-    coding: gemini-3.7-flash
+    fast: gemini-3.6-flash
+    default: gemini-3.6-flash
+    vision: gemini-3.6-flash
+    reasoning: gemini-3.6-flash
+    coding: gemini-3.6-flash
   default_role: default
+

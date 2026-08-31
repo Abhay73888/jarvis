@@ -217,6 +217,22 @@ class AgentEngine:
         from datetime import datetime
         now = datetime.now().strftime("%A, %d %B %Y %H:%M")
         working = self.working.summary()
+
+        # Compact tool-focused prompt for small local models (3B/7B)
+        if self._router.is_using_local_brain():
+            return (
+                f"You are {s.personality.name}, an offline AI operating layer on the user's PC.\n"
+                f"{lang}\n"
+                f"Current local time: {now}.\n"
+                f"Guidelines:\n"
+                f"- Be direct, concise, and helpful.\n"
+                f"- Execute tools when requested; never guess real-world data.\n"
+                f"- For summaries, explanations, translations (hi<->en), and code, answer directly.\n"
+                f"- Never reveal secrets or bypass confirmations.\n"
+                f"{prefs_text}"
+                + (f"\nContext:\n{working}" if working else "")
+            )
+
         return (
             f"You are {s.personality.name}, a personal AI assistant running on the user's "
             f"computer. {s.personality.style}\n"
@@ -232,6 +248,7 @@ class AgentEngine:
             f"{prefs_text}"
             + (f"\nWorking memory:\n{working}" if working else "")
         )
+
 
     async def load_preferences_text(self) -> None:
         try:

@@ -10,7 +10,7 @@ LLM reasoning + real computer control (apps, files, terminal, browser agent) +
 memory + permissions + verification. Built phase-by-phase per the original
 spec in `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`.
 
-**Current state: God-Level Desktop OS Layer Complete (Phases 1–9, 11–14 complete — 151 pytest tests 100% green).**
+**Current state: 100% Offline JARVIS Operating Layer Complete (Phases 1–15 & Stages O1–O5 complete — 171 pytest tests 100% green).**
 
 
 ## Ground rules (non-negotiable)
@@ -43,7 +43,8 @@ python -m venv .venv
 pip install -r requirements.txt -r requirements-windows.txt
 python run.py init          # writes config/*.yaml + .env template guidance
 python run.py doctor        # environment diagnostics
-pytest -q                   # MUST end with "151 passed"
+python run.py offline-verify # offline pack & component self-tests
+pytest -q                   # MUST end with "171 passed"
 ```
 
 Optional (browser agent): `pip install playwright && playwright install chromium`
@@ -51,28 +52,30 @@ Optional (browser agent): `pip install playwright && playwright install chromium
 To talk to JARVIS:
 - Desktop HUD GUI & Voice: `run.bat app` (or `python run.py app`)
 - Interactive CLI: `python run.py --speak --voice`
+- Offline Setup & Verify: `python run.py offline-setup` / `python run.py offline-verify`
 - Diagnostics: `python run.py doctor` / `python run.py voice-test`
 
 ## Architecture map (where things live)
 
 ```
-run.py                 launcher (cli | app | init | doctor | voice-test | startup)
+run.py                 launcher (cli | app | init | doctor | voice-test | startup | offline)
 app/main.py            composition root — build_runtime()
 app/core/              EventBus, redacting JSON logs, exceptions
 app/config/settings.py typed settings; YAML + ${ENV} interpolation; .env loader
 app/security/          risk classifier, secret redaction, injection defense, DPAPI vault, sandbox
 app/permissions/       decision matrix + confirm flow (UI installs a handler)
-app/brain/             providers (OpenAI-compat/Anthropic/Gemini/Ollama),
+app/brain/             providers (OpenAI-compat/Anthropic/Gemini/Ollama), connectivity monitor,
                        ModelRouter, intent fast-path (EN/HI/Hinglish), AgentEngine, self-healing
-app/tools/             BaseTool + ToolManager pipeline + builtin/ tools
+app/offline/           manifest manager, setup installer, 10s verifier suite
+app/tools/             BaseTool + ToolManager pipeline + builtin/ (dictation, knowledge, productivity, system_control, tasks_companion)
 app/browser/           PlaywrightDriver — semantic refs, verified actions
 app/computer/          app discovery, window control (pywin32), proactive monitor, autostart
-app/voice/             wake-word (openwakeword), faster-whisper STT, neural TTS, barge-in, hotkeys
+app/voice/             wake-word (openwakeword), faster-whisper STT, Piper neural TTS, barge-in, hotkeys
 app/vision/            mss screen capture, pytesseract OCR (eng+hin), Gemini multimodal vision
-app/ui/                PySide6 dark-glass HUD, animated orb visualizer, tray, permission dialogs
+app/ui/                PySide6 dark-glass HUD, animated orb visualizer, tray, synapse matrix, settings modal
 app/memory/            short-term (DB), working memory, summarizer, project registry, preferences
 app/database/          SQLAlchemy async models + repos (SQLite)
-tests/                 pytest suite (151 tests: core, voice, offscreen GUI, vision, window control, memory)
+tests/                 pytest suite (171 tests: core, offline pack, voice loop socket-blocked, brain, superpowers)
 docs/                  ARCHITECTURE / ROADMAP / SECURITY / WINDOWS-NOTES
 scripts/               build_exe.py (standalone PyInstaller builder)
 ```
@@ -108,5 +111,11 @@ Key invariants:
    - Proactive monitor: disk space (>90%), memory (>95%), due reminders.
    - Packaging: PyInstaller onedir standalone distribution (`JARVIS.exe`).
    - Security: Windows DPAPI vault, zero-trust sandbox, emergency lockdown, HMAC audit ledger.
+5. **Stage 5 (Stages O1–O5) — 100% Offline Suite (v0.6.0-offline)**:
+   - **Stage O1 (Offline Pack)**: One-time setup (`python run.py offline-setup`), RAM-sizing model recommendations, offline manifest manager, 10s verifier (`python run.py offline-verify`).
+   - **Stage O2 (Offline Voice Loop)**: Sub-second openwakeword listening, faster-whisper STT, Piper natural female neural voices, socket-blocked zero-network voice pipeline.
+   - **Stage O3 (Offline Brain)**: Hybrid router with automatic fallback to Ollama local models, Privacy Mode zero-network enforcement, compact tool prompt adaptations.
+   - **Stage O4 (Boot Companion)**: Spoken daily brief (<3s post-login), local DB tasks companion (add, complete, snooze, review), offline-honest weather handling.
+   - **Stage O5 (Offline Superpowers)**: Complete tool offline audit, offline dictation mode, local knowledge tool, productivity utilities, HUD Synapse Matrix badges.
 
 Update `docs/ROADMAP.md` and the README status matrix when new capabilities land.

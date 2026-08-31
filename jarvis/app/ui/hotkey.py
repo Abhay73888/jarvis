@@ -1,10 +1,12 @@
 """Global Hotkey Manager for Windows.
 
 Registers system-wide hotkeys:
-- Alt + J (Primary AI toggle)
-- Ctrl + Shift + A (Assistant)
+- Ctrl + Shift + J (Primary AI toggle)
+- Ctrl + Alt + J (Secondary AI toggle)
+- Alt + J (AI quick toggle)
+- Ctrl + Shift + A (Assistant toggle)
 - F8 (Single Key toggle)
-- Ctrl + Shift + K
+- Ctrl + Shift + K (Terminal toggle)
 """
 from __future__ import annotations
 
@@ -26,6 +28,7 @@ MOD_SHIFT = 0x0004
 MOD_WIN = 0x0008
 MOD_NOREPEAT = 0x4000
 WM_HOTKEY = 0x0312
+WM_QUIT = 0x0012
 VK_F8 = 0x77
 
 
@@ -35,6 +38,7 @@ class GlobalHotkeyThread(QThread):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._running = True
+        self._win32_thread_id: int = 0
         self.registered_ids: list[int] = []
 
     def run(self) -> None:
@@ -42,12 +46,17 @@ class GlobalHotkeyThread(QThread):
             return
 
         user32 = ctypes.windll.user32
+        kernel32 = ctypes.windll.kernel32
+        self._win32_thread_id = kernel32.GetCurrentThreadId()
+
         msg = wintypes.MSG()
         # Force message queue initialization on this thread
         user32.PeekMessageW(ctypes.byref(msg), 0, 0, 0, 0)
 
-        # Free verified shortcuts
+        # Windows Global Shortcuts for JARVIS HUD Toggle
         combos = [
+            (MOD_CONTROL | MOD_SHIFT, ord("J"), 100, "Ctrl + Shift + J"),
+            (MOD_CONTROL | MOD_ALT, ord("J"), 105, "Ctrl + Alt + J"),
             (MOD_ALT, ord("J"), 101, "Alt + J"),
             (MOD_CONTROL | MOD_SHIFT, ord("A"), 102, "Ctrl + Shift + A"),
             (0, VK_F8, 103, "F8"),
@@ -68,7 +77,7 @@ class GlobalHotkeyThread(QThread):
             res = user32.GetMessageW(ctypes.byref(msg), None, 0, 0)
             if res > 0:
                 if msg.message == WM_HOTKEY and msg.wParam in self.registered_ids:
-                    log.debug("global hotkey triggered: %d", msg.wParam)
+                    log.info("Global hotkey triggered (ID=%d)", msg.wParam)
                     self.hotkey_triggered.emit()
                 user32.TranslateMessage(ctypes.byref(msg))
                 user32.DispatchMessageW(ctypes.byref(msg))
@@ -76,10 +85,17 @@ class GlobalHotkeyThread(QThread):
                 break
 
         for hid in self.registered_ids:
-            user32.UnregisterHotKey(None, hid)
+            try:
+                user32.UnregisterHotKey(None, hid)
+            except Exception:
+                pass
+        self.registered_ids.clear()
 
     def stop(self) -> None:
         self._running = False
-        if sys.platform == "win32":
-            user32 = ctypes.windll.user32
-            user32.PostQuitMessage(0)
+        if sys.platform == "win32" and self._win32_thread_id:
+            try:
+                user32 = ctypes.windll.user32
+                user32.PostThreadMessageW(self._win32_thread_id, WM_QUIT, 0, 0)
+            except Exception:
+                pass

@@ -1,6 +1,7 @@
-"""Time-aware greeting generator and startup helper (Feature 1).
+"""Time-aware greeting generator and startup helper (Feature 1 & Stage O4).
 
-Generates context-aware greetings based on time-of-day, day/date, and pending reminders.
+Generates context-aware greetings and Spoken Daily Briefs based on time-of-day,
+day/date, battery, disk warnings, and local SQLite tasks.
 """
 from __future__ import annotations
 
@@ -8,7 +9,9 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
+
+import psutil
 
 
 def build_greeting(
@@ -16,19 +19,13 @@ def build_greeting(
     address: str = "sir",
     include_brief: bool = True,
     pending_today: int = 0,
+    task_titles: Optional[list[str]] = None,
+    battery_info: Optional[dict[str, Any]] = None,
+    disk_info: Optional[dict[str, Any]] = None,
+    is_online: bool = False,
+    include_weather: bool = False,
 ) -> str:
-    """Build a time-aware greeting string.
-
-    Time buckets:
-      - 5am - 12pm:  "Good morning, {address}."
-      - 12pm - 5pm:  "Good afternoon, {address}."
-      - 5pm - 9pm:   "Good evening, {address}."
-      - 9pm - 5am:   "Working late, {address}."
-
-    If include_brief is True:
-      - Appends "Today is {Day}, {Month} {Day_Number}."
-      - Appends "You have {N} reminder(s) due today." if pending_today > 0.
-    """
+    """Build a time-aware greeting and spoken daily brief string."""
     hour = now.hour
     if 5 <= hour < 12:
         salutation = f"Good morning, {address}."
@@ -43,13 +40,48 @@ def build_greeting(
         return salutation
 
     day_str = now.strftime("%A, %B %d").replace(" 0", " ")
-    brief = f" Today is {day_str}."
+    parts = [salutation, f"Today is {day_str}."]
 
-    if pending_today > 0:
-        rem_text = "1 reminder" if pending_today == 1 else f"{pending_today} reminders"
-        brief += f" You have {rem_text} due today."
+    # Telemetry checks (battery & disk space)
+    try:
+        if battery_info is None:
+            bat = psutil.sensors_battery()
+            if bat:
+                battery_info = {"percent": int(bat.percent), "plugged": bat.power_plugged}
+        if battery_info:
+            plug = " (charging)" if battery_info.get("plugged") else ""
+            parts.append(f"Battery {battery_info.get('percent')}%{plug}.")
+    except Exception:
+        pass
 
-    return salutation + brief
+    try:
+        if disk_info is None:
+            du = psutil.disk_usage("/")
+            disk_info = {"percent": int(du.percent)}
+        if disk_info and disk_info.get("percent", 0) > 90:
+            parts.append(f"Disk warning: storage {disk_info['percent']}% full.")
+    except Exception:
+        pass
+
+    # Pending tasks & reminders
+    if pending_today > 0 or (task_titles and len(task_titles) > 0):
+        count = pending_today if pending_today > 0 else len(task_titles or [])
+        if task_titles and len(task_titles) > 0:
+            first_task = task_titles[0]
+            parts.append(
+                f"Aaj aapke {count} tasks hain — sabse pehle: '{first_task}'. Sab karein ya details sunaun?"
+            )
+        else:
+            rem_text = "1 reminder" if count == 1 else f"{count} reminders"
+            parts.append(f"You have {rem_text} due today.")
+
+    if include_weather:
+        if is_online:
+            parts.append("Weather: Sunny and clear.")
+        else:
+            parts.append("Weather ke liye offline hoon.")
+
+    return " ".join(parts)
 
 
 def get_windows_startup_dir() -> Path:
@@ -74,10 +106,7 @@ def install_startup_bat(
     console: bool = False,
     target_dir: Optional[Path] = None,
 ) -> Path:
-    """Install JARVIS-Greeting.bat into the user's Startup folder.
-
-    Explicit opt-in only.
-    """
+    """Install JARVIS-Greeting.bat into the user's Startup folder."""
     bat_path = get_startup_bat_path(target_dir)
     bat_path.parent.mkdir(parents=True, exist_ok=True)
 

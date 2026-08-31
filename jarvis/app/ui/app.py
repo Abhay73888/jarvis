@@ -28,7 +28,7 @@ log = get_logger("ui.app")
 
 def _toggle_window(window: MainWindow) -> None:
     """Toggle visibility and force-focus of the main HUD window."""
-    if window.isVisible() and window.isActiveWindow():
+    if window.isVisible() and window.isActiveWindow() and not window.isMinimized():
         window.hide()
     else:
         window.showNormal()
@@ -38,8 +38,10 @@ def _toggle_window(window: MainWindow) -> None:
             try:
                 import ctypes
                 hwnd = int(window.winId())
-                ctypes.windll.user32.ShowWindow(hwnd, 9)  # SW_RESTORE
-                ctypes.windll.user32.SetForegroundWindow(hwnd)
+                user32 = ctypes.windll.user32
+                user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+                user32.SetForegroundWindow(hwnd)
+                user32.BringWindowToTop(hwnd)
             except Exception:
                 pass
         if hasattr(window, "input_edit"):
@@ -93,6 +95,7 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
         bus=runtime.bus,
         settings=runtime.settings,
         voice_listener=voice_listener,
+        async_loop=async_loop,
         on_close_to_tray_callback=lambda: window.hide(),
     )
     bridge.parent_window = window

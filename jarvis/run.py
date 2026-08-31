@@ -46,6 +46,15 @@ def main() -> int:
         from app.cli import cmd_init
         return asyncio.run(cmd_init())
 
+    if command in ("offline-setup", "offlinesetup") or (command == "offline" and len(non_flags) > 1 and non_flags[1] == "setup"):
+        from app.cli import cmd_offline_setup
+        force = "--force" in args
+        return asyncio.run(cmd_offline_setup(force=force))
+
+    if command in ("offline-verify", "offlineverify", "verify-offline") or (command == "offline" and len(non_flags) > 1 and non_flags[1] == "verify"):
+        from app.cli import cmd_offline_verify
+        return asyncio.run(cmd_offline_verify())
+
     if command == "doctor":
         from app.cli import cmd_doctor
         return asyncio.run(cmd_doctor())

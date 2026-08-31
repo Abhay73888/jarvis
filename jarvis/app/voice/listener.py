@@ -9,7 +9,7 @@ Supports:
 - Local wake word & Push-to-Talk (Ctrl + Space)
 - Emergency Stop (Ctrl + Shift + Space)
 - Spoken Barge-in Interrupts ('stop' / 'ruk jao' / 'abort')
-- Adaptive noise floor and AGC for quiet laptop microphones.
+- Measured honest latencies (wake->chime, speech_end->transcript, transcript->first_audio)
 """
 from __future__ import annotations
 
@@ -72,6 +72,7 @@ class VoiceListener:
         self.state_machine = VoiceStateMachine(self._on_state_change)
         self.barge_in = BargeInDetector()
         self.hotkeys: Optional[GlobalHotkeyManager] = None
+        self.last_latencies: dict[str, float] = {}
 
     @property
     def is_running(self) -> bool:
@@ -112,7 +113,6 @@ class VoiceListener:
             try:
                 import openwakeword
                 from openwakeword.model import Model
-                openwakeword.utils.download_models()
                 wake_words = ["hey_jarvis", "jarvis"]
                 if self.settings and self.settings.voice.wake_words:
                     wake_words = [w.lower().replace(" ", "_") for w in self.settings.voice.wake_words]
@@ -197,11 +197,11 @@ class VoiceListener:
                 else:
                     continue
 
-            # Check for spoken barge-in if synthesizer is speaking
+            # Spoken barge-in check
             if self.synthesizer.is_speaking:
                 rms = AudioProcessor.calculate_rms(chunk)
                 if AudioProcessor.is_speech(rms, self._noise_floor, multiplier=2.5, min_threshold=0.01):
-                    # Spoken activity detected during speech -> sample and test barge-in
+                    # Potential spoken barge-in during speech playback
                     pass
 
             if self._muted:
@@ -217,6 +217,7 @@ class VoiceListener:
             manual_triggered = self._manual_trigger.is_set()
 
             if wake_detected or manual_triggered:
+                t_wake = time.perf_counter()
                 self._manual_trigger.clear()
                 self._is_recording_command = True
                 self.state_machine.on_wake_detected()
@@ -230,6 +231,9 @@ class VoiceListener:
 
                 await self.bus.publish(Topics.STATUS, {"state": "listening", "detail": "Listening..."})
                 await self._play_wake_chime()
+                t_chime = time.perf_counter()
+                self.last_latencies["wake_to_chime_ms"] = round((t_chime - t_wake) * 1000, 1)
+                log.info("[LATENCY] Wake -> Chime: %.1f ms", self.last_latencies["wake_to_chime_ms"])
 
                 # Prompt 'Yes?'
                 self.state_machine.on_prompt_start()
@@ -238,9 +242,9 @@ class VoiceListener:
 
                 # Record user command
                 self.state_machine.on_recording_start()
-                utterance_audio = await self._record_utterance(queue, pre_roll)
+                utterance_audio, t_speech_end = await self._record_utterance(queue, pre_roll)
                 if utterance_audio is not None and len(utterance_audio) > SAMPLE_RATE * 0.4:
-                    await self._handle_utterance(utterance_audio)
+                    await self._handle_utterance(utterance_audio, t_speech_end)
 
                 self._is_recording_command = False
                 self.state_machine.on_idle()
@@ -266,13 +270,14 @@ class VoiceListener:
         self,
         queue: asyncio.Queue[np.ndarray],
         pre_roll: collections.deque,
-    ) -> Optional[np.ndarray]:
+    ) -> tuple[Optional[np.ndarray], float]:
         recorded_chunks = list(pre_roll)
         silence_start: Optional[float] = None
         has_spoken = False
         start_time = time.time()
         max_duration = self.settings.voice.max_record_duration_s if self.settings else MAX_RECORD_DURATION_S
         silence_limit = self.settings.voice.silence_duration_s if self.settings else 1.2
+        t_speech_end = time.perf_counter()
 
         while self._running and (time.time() - start_time < max_duration):
             try:
@@ -290,20 +295,25 @@ class VoiceListener:
                 if has_spoken:
                     if silence_start is None:
                         silence_start = time.time()
+                        t_speech_end = time.perf_counter()
                     elif time.time() - silence_start >= silence_limit:
                         log.debug("end of speech detected (silence duration >= %.1fs)", silence_limit)
                         break
 
         if not recorded_chunks:
-            return None
+            return None, time.perf_counter()
 
         full_audio = np.concatenate(recorded_chunks)
-        return AudioProcessor.normalize_audio(full_audio, target_peak=0.7)
+        return AudioProcessor.normalize_audio(full_audio, target_peak=0.7), t_speech_end
 
-    async def _handle_utterance(self, audio: np.ndarray) -> None:
+    async def _handle_utterance(self, audio: np.ndarray, t_speech_end: float) -> None:
         self.state_machine.on_transcribe_start()
         await self.bus.publish(Topics.STATUS, {"state": "thinking", "detail": "Transcribing..."})
         text = await self.transcriber.transcribe(audio)
+        t_transcribed = time.perf_counter()
+        lat_stt = round((t_transcribed - t_speech_end) * 1000, 1)
+        self.last_latencies["stop_speaking_to_transcript_ms"] = lat_stt
+        log.info("[LATENCY] Stop Speaking -> Transcript: %.1f ms", lat_stt)
 
         if not text or not text.strip():
             log.info("no clear speech transcribed")
@@ -340,8 +350,17 @@ class VoiceListener:
 
         self.state_machine.on_speaking_start()
         await self.bus.publish(Topics.STATUS, {"state": "speaking", "detail": "Speaking..."})
+
         if not self.settings or self.settings.voice.speak_responses:
-            await self.synthesizer.speak(reply_text)
+            t_reply_ready = time.perf_counter()
+
+            def on_first_word():
+                t_first_audio = time.perf_counter()
+                lat_audio = round((t_first_audio - t_transcribed) * 1000, 1)
+                self.last_latencies["transcript_to_first_audio_ms"] = lat_audio
+                log.info("[LATENCY] Transcript -> First Audio Word: %.1f ms", lat_audio)
+
+            await self.synthesizer.speak(reply_text, on_first_audio_callback=on_first_word)
 
     async def _play_wake_chime(self) -> None:
         try:

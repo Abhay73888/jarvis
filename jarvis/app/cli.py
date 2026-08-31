@@ -415,3 +415,16 @@ async def cmd_voice_test() -> int:
     print("  Test complete.\n")
     return 0
 
+
+async def cmd_offline_setup(force: bool = False) -> int:
+    """Run one-time offline package installer."""
+    from app.offline.setup import run_offline_setup
+    return await run_offline_setup(force=force)
+
+
+async def cmd_offline_verify() -> int:
+    """Run 10-second end-to-end offline verification."""
+    from app.offline.verifier import run_offline_verify
+    return await run_offline_verify()
+
+

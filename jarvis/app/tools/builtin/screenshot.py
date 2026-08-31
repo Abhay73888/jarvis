@@ -62,6 +62,12 @@ def register_all(registry) -> None:  # pragma: no cover — wiring helper
                                          ListDirTool, MoveFileTool, OpenPathTool, ReadFileTool,
                                          SearchFilesTool)
     from app.tools.builtin.memory_tools import ListTasksTool, RecallTool, RememberTool, SetReminderTool
+    from app.tools.builtin.tasks_companion import TaskCompanionTool
+    from app.tools.builtin.productivity import ProductivityTool
+    from app.tools.builtin.dictation import DictationTool
+    from app.tools.builtin.knowledge import KnowledgeTool
+    from app.tools.builtin.system_control import SystemControlTool
+
     from app.tools.builtin.system import KillProcessTool, ProcessListTool, SystemInfoTool
     from app.tools.builtin.terminal import RunPythonTool, TerminalExecuteTool
     from app.tools.builtin.vision import AnalyzeScreenTool, ReadScreenTool
@@ -78,6 +84,10 @@ def register_all(registry) -> None:  # pragma: no cover — wiring helper
         ScreenshotTool(), AnalyzeScreenTool(), ReadScreenTool(),
         ManageWindowTool(),
         RememberTool(), RecallTool(), SetReminderTool(), ListTasksTool(),
+        TaskCompanionTool(),
+        ProductivityTool(), DictationTool(), KnowledgeTool(), SystemControlTool(),
     ):
         registry.register(tool)
+
     register_browser_tools(registry)
+

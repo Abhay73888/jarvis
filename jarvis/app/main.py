@@ -57,7 +57,7 @@ async def build_runtime(settings: Settings | None = None, confirm_handler=None) 
     tools = build_tool_manager(settings, permissions, bus, session_factory)
 
     conversations = ConversationManager(settings, session_factory, bus)
-    router = ModelRouter(settings.ai)
+    router = ModelRouter(settings.ai, bus=bus)
     engine = AgentEngine(settings, router, tools, conversations, bus)
 
     workdir = Path.home()
