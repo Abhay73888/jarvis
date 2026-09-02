@@ -1,8 +1,5 @@
 """Tests for JARVIS Ultra God-Level Security Suite."""
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from app.brain.intent import IntentRouter
 from app.security.audit import AuditLedger
@@ -76,9 +73,9 @@ def test_immutable_audit_ledger_integrity(tmp_path: Path):
     ledger = AuditLedger(ledger_path=ledger_file)
 
     # Record legitimate events
-    h1 = ledger.record_event("login", {"user": "admin"})
-    h2 = ledger.record_event("tool_executed", {"tool": "open_application", "app": "Chrome"})
-    h3 = ledger.record_event("permission_granted", {"category": "terminal", "risk": "MEDIUM"})
+    ledger.record_event("login", {"user": "admin"})
+    ledger.record_event("tool_executed", {"tool": "open_application", "app": "Chrome"})
+    ledger.record_event("permission_granted", {"category": "terminal", "risk": "MEDIUM"})
 
     valid, count = ledger.verify_ledger_integrity()
     assert valid

@@ -78,7 +78,6 @@ class LLMProvider(ABC):
 
     async def close(self) -> None:
         """Close persistent HTTP clients/connections."""
-        pass
 
 
     # ---- shared helpers

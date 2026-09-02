@@ -8,7 +8,8 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections import defaultdict
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 log = logging.getLogger("jarvis.bus")
 
@@ -53,7 +54,7 @@ class EventBus:
                 result = handler(topic, payload)
                 if asyncio.iscoroutine(result):
                     await result
-            except Exception:  # noqa: BLE001 — a bad subscriber must not break the bus
+            except Exception:
                 log.exception("Event handler failed for topic=%s", topic)
 
     async def request(self, topic: str, payload: dict[str, Any] | None = None) -> Any:
@@ -67,6 +68,6 @@ class EventBus:
                     result = await result
                 if result is not None:
                     return result
-            except Exception:  # noqa: BLE001
+            except Exception:
                 log.exception("Request handler failed for topic=%s", topic)
         return None

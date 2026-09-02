@@ -308,7 +308,7 @@ class PlaywrightDriver:
                   ".slice(0, 8).map(a => ({title: a.innerText.trim().slice(0,110), url: a.href}))")
         try:
             rows = await self._page.evaluate(f"() => {js}")
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise ToolError("Reading the search results failed.", detail=str(exc)) from exc
         seen: set[str] = set()
         results = []

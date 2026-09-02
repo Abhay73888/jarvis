@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import platform
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import psutil
 from pydantic import BaseModel, Field
@@ -32,7 +32,7 @@ class SystemInfoTool(BaseTool):
     async def execute(self, args: dict, ctx: ToolContext) -> ToolResult:
         vm = psutil.virtual_memory()
         disk = psutil.disk_usage(ctx.workdir.anchor if hasattr(ctx.workdir, "anchor") else "/")
-        boot = datetime.fromtimestamp(psutil.boot_time(), tz=timezone.utc)
+        boot = datetime.fromtimestamp(psutil.boot_time(), tz=UTC)
         battery = psutil.sensors_battery()
         data = {
             "os": f"{platform.system()} {platform.release()} ({platform.machine()})",
@@ -45,7 +45,7 @@ class SystemInfoTool(BaseTool):
             "disk_percent": disk.percent,
             "disk_used_gb": round(disk.used / 1e9, 1),
             "disk_total_gb": round(disk.total / 1e9, 1),
-            "uptime": str(datetime.now(tz=timezone.utc) - boot).split(".")[0],
+            "uptime": str(datetime.now(tz=UTC) - boot).split(".")[0],
         }
         if battery is not None:
             data["battery_percent"] = battery.percent

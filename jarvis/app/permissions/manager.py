@@ -12,8 +12,9 @@ The UI/CLI supplies an async confirmation handler; without one, deny-by-default.
 """
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 from app.config.settings import Settings
 from app.core.events import EventBus, Topics

@@ -1,5 +1,8 @@
 # 🤖 JARVIS — Personal AI Operating Layer
 
+[![CI](https://github.com/Abhay73888/jarvis/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhay73888/jarvis/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 > An autonomous, ultra-secure, voice-activated desktop AI operating layer for Windows powered by Google Gemini and faster-whisper.
 
 ---
@@ -73,4 +76,4 @@ pytest
 ---
 
 ## 📄 License
-MIT License.
+MIT License — see [LICENSE](LICENSE).

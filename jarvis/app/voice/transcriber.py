@@ -6,11 +6,7 @@ Runs on CPU by default with INT8 quantization for minimal resource usage.
 from __future__ import annotations
 
 import asyncio
-import io
-import os
-import tempfile
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 

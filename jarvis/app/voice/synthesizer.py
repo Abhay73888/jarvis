@@ -8,12 +8,9 @@ Supports:
 from __future__ import annotations
 
 import asyncio
-import io
 import re
-import sys
 import tempfile
 from pathlib import Path
-from typing import Optional
 
 from app.core.logging import get_logger
 
@@ -26,7 +23,7 @@ class VoiceSynthesizer:
         self.offline_voice = offline_voice
         self._is_speaking = False
         self._cancel_requested = False
-        self._current_task: Optional[asyncio.Task] = None
+        self._current_task: asyncio.Task | None = None
 
     @property
     def is_speaking(self) -> bool:
@@ -113,8 +110,7 @@ class VoiceSynthesizer:
             container = av.open(str(path))
             stream = container.streams.audio[0]
             sample_rate = stream.rate or 24000
-            channels = stream.channels or 1
-
+            
             audio_frames = []
             for frame in container.decode(stream):
                 if self._cancel_requested:

@@ -5,9 +5,9 @@ even when the main HUD window is minimized or closed.
 """
 from __future__ import annotations
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QColor, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import QMenu, QSystemTrayIcon, QWidget
 
@@ -42,7 +42,7 @@ class JarvisTrayIcon(QSystemTrayIcon):
         self,
         parent_window: QWidget,
         voice_listener=None,
-        on_exit_callback: Optional[Callable[[], None]] = None,
+        on_exit_callback: Callable[[], None] | None = None,
     ) -> None:
         icon = create_tray_icon()
         super().__init__(icon, parent_window)

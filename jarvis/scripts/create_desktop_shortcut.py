@@ -3,7 +3,6 @@ and enables auto-start on laptop boot.
 """
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 

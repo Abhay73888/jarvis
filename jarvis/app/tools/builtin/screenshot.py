@@ -35,6 +35,7 @@ class ScreenshotTool(BaseTool):
                 detail="mss not installed")
 
         import asyncio
+
         from app.utils.paths import get_paths
 
         def _capture() -> Path:
@@ -57,11 +58,25 @@ class ScreenshotTool(BaseTool):
 def register_all(registry) -> None:  # pragma: no cover — wiring helper
     from app.tools.builtin.apps import CloseApplicationTool, OpenApplicationTool
     from app.tools.builtin.browser import register_browser_tools
-    from app.tools.builtin.files import (CompressTool, CopyFileTool, CreateFileTool,
-                                         CreateFolderTool, DeleteFileTool, ExtractTool,
-                                         ListDirTool, MoveFileTool, OpenPathTool, ReadFileTool,
-                                         SearchFilesTool)
-    from app.tools.builtin.memory_tools import ListTasksTool, RecallTool, RememberTool, SetReminderTool
+    from app.tools.builtin.files import (
+        CompressTool,
+        CopyFileTool,
+        CreateFileTool,
+        CreateFolderTool,
+        DeleteFileTool,
+        ExtractTool,
+        ListDirTool,
+        MoveFileTool,
+        OpenPathTool,
+        ReadFileTool,
+        SearchFilesTool,
+    )
+    from app.tools.builtin.memory_tools import (
+        ListTasksTool,
+        RecallTool,
+        RememberTool,
+        SetReminderTool,
+    )
     from app.tools.builtin.system import KillProcessTool, ProcessListTool, SystemInfoTool
     from app.tools.builtin.terminal import RunPythonTool, TerminalExecuteTool
     from app.tools.builtin.web import FetchUrlTool, OpenUrlTool, WebSearchTool

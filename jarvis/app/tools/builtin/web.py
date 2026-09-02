@@ -10,7 +10,7 @@ import asyncio
 import re
 import webbrowser
 from html.parser import HTMLParser
-from urllib.parse import urlparse, urlunparse, quote_plus
+from urllib.parse import quote_plus, urlparse, urlunparse
 
 import httpx
 from pydantic import BaseModel, Field

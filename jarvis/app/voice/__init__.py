@@ -11,4 +11,4 @@ from app.voice.listener import VoiceListener
 from app.voice.synthesizer import VoiceSynthesizer
 from app.voice.transcriber import VoiceTranscriber
 
-__all__ = ["VoiceSynthesizer", "VoiceTranscriber", "VoiceListener"]
+__all__ = ["VoiceListener", "VoiceSynthesizer", "VoiceTranscriber"]

@@ -36,7 +36,7 @@ class Stack:
         self.decisions: list[str] = []
         self.confirm_decision = "allow_once"
 
-    async def build(self, models: list[ModelEntry] | None = None) -> "Stack":
+    async def build(self, models: list[ModelEntry] | None = None) -> Stack:
         from app.utils.paths import get_paths
         paths = get_paths()
         engine = make_engine(paths.db_file)

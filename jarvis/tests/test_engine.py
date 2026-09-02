@@ -92,8 +92,9 @@ async def test_memory_tools_roundtrip(jarvis_home: Path, stack):
 
 
 async def test_reminder_natural_language_times(jarvis_home: Path, stack):
-    from app.tools.builtin.memory_tools import parse_due_at
     from datetime import datetime
+
+    from app.tools.builtin.memory_tools import parse_due_at
 
     now = datetime(2026, 8, 24, 11, 0)
     assert parse_due_at("tomorrow 10:00", now).hour == 10
