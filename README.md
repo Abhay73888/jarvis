@@ -2,14 +2,20 @@
 
 <div align="center">
 
-[![Python Version](https://img.shields.io/badge/Python-3.12%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6.svg?style=for-the-badge&logo=windows&logoColor=white)](https://microsoft.com/windows)
-[![Offline Status](https://img.shields.io/badge/Offline%20First-100%25%20Air--Gapped-success.svg?style=for-the-badge&logo=shield&logoColor=white)](#-offline-first-architecture)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Tests Passing](https://img.shields.io/badge/Tests-171%20Passed-brightgreen.svg?style=for-the-badge&logo=pytest&logoColor=white)](#-testing--verification)
-[![UI Framework](https://img.shields.io/badge/GUI-PySide6%20Qt6-41CD52.svg?style=for-the-badge&logo=qt&logoColor=white)](https://www.qt.io/)
+[![Python Version](https://img.shields.io/badge/Python-3.12%2B-00F0FF?style=for-the-badge&logo=python&logoColor=black)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://microsoft.com/windows)
+[![Offline Status](https://img.shields.io/badge/Offline%20First-100%25%20Air--Gapped-00FFA3?style=for-the-badge&logo=shield&logoColor=black)](#-offline-first-architecture)
+[![Security](https://img.shields.io/badge/Security-Zero--Trust%20DPAPI-7C4DFF?style=for-the-badge&logo=lock&logoColor=white)](#-zero-trust-security-suite)
+[![Tests Passing](https://img.shields.io/badge/Tests-171%20Passed%20(100%25)-00E676?style=for-the-badge&logo=pytest&logoColor=black)](#-testing--verification)
+[![UI Framework](https://img.shields.io/badge/GUI-PySide6%20Qt6-FFB700?style=for-the-badge&logo=qt&logoColor=black)](https://www.qt.io/)
+[![License](https://img.shields.io/badge/License-MIT-FF2A55?style=for-the-badge)](LICENSE)
 
-**An autonomous, ultra-secure, voice-activated desktop AI operating layer for Windows powered by Google Gemini, Ollama Local Brain, Piper Neural TTS, faster-whisper, and PySide6 Dark-Glass HUD.**
+<br />
+
+### 🌌 *Autonomous • Ultra-Secure • Voice-Activated • 100% Offline Operating Layer for Windows*
+**Powered by Google Gemini • Ollama Local Brain • Piper Neural TTS • faster-whisper • PySide6 Dark-Glass HUD**
+
+<br />
 
 [Overview](#-overview) • [Architecture](#-system-architecture) • [Workflows](#-complete-project-workflows) • [Tech Stack](#-tech-stack) • [Database](#-database-architecture) • [Security](#-zero-trust-security-suite) • [Installation](#-installation--setup) • [Recruiter Brief](#-recruiter--interview-guide)
 
@@ -23,17 +29,20 @@
 
 Designed with an **Offline-First, Zero-Trust philosophy**, JARVIS operates seamlessly without an active internet connection—running local wake-word detection, multilingual STT, neural voice synthesis, and local LLM reasoning—while maintaining enterprise-grade safety gates, TPM hardware encryption, and zero-loss cloud failover.
 
+> [!TIP]
+> **Zero Cloud Dependency**: JARVIS can operate 100% air-gapped without transmitting a single byte of telemetry or audio outside your local machine.
+
 ---
 
 ## 🎯 Problem Statement vs. 💡 The JARVIS Solution
 
 | Traditional AI Chatbots & Assistants | The JARVIS Operating Layer |
-|---|---|
-| **Cloud-Tethered & Privacy Invasive**: Every keystroke and voice snippet is sent to external cloud servers. | **100% Offline-Capable**: Fully functional in air-gapped environments using local neural weights (Ollama, Piper, faster-whisper, openwakeword). |
-| **No Real System Agency**: Trapped in a browser tab; cannot manage windows, inspect OS performance, or edit files. | **Deep OS Integration**: Controls native Windows APIs via `pywin32`, `pywinauto`, Playwright browser automation, and PowerShell execution. |
-| **Hallucinatory Success**: Chatbots claim tasks are done without inspecting reality. | **Honest Self-Verification**: Every tool verifies its real-world effect (polling process tables, checking exit codes, diffing filesystem). |
-| **Vulnerable to Prompt Injection**: Malicious web data or documents can hijack model instructions. | **Zero-Trust Fencing & Sandbox**: Wraps all untrusted content in `<untrusted-external-content>` boundaries and halts destructive shell patterns. |
-| **High Latency (>2-4s)**: Every mundane command ("volume up", "open notepad") requires cloud LLM roundtrips. | **0ms Intent Fast-Path**: Deterministic regex-based NLU instantly executes common English & Hindi/Hinglish commands locally. |
+|:---|:---|
+| ☁️ **Cloud-Tethered & Privacy Invasive**<br>Every keystroke and voice snippet is transmitted to third-party cloud servers. | 🛡️ **100% Offline-Capable & Private**<br>Operates fully in air-gapped environments using local neural weights (Ollama, Piper, faster-whisper, openwakeword). |
+| 🪟 **No Real System Agency**<br>Confined to a browser tab; cannot manage windows, inspect OS performance, or edit files. | ⚙️ **Deep Windows OS Integration**<br>Controls native Windows APIs via `pywin32`, `pywinauto`, Playwright browser automation, and PowerShell. |
+| 🪞 **Hallucinatory Success**<br>Chatbots claim tasks are completed without inspecting the actual environment. | ✅ **Honest Self-Verification**<br>Every tool verifies its real-world effect (polling process tables, checking exit codes, diffing filesystem). |
+| 💉 **Vulnerable to Prompt Injection**<br>Malicious web data or documents can hijack model instructions. | 🧱 **Zero-Trust Fencing & Sandbox**<br>Wraps all untrusted content in `<untrusted-external-content>` boundaries and halts destructive shell patterns. |
+| 🐢 **High Latency (>2-4s)**<br>Every mundane command ("volume up", "open notepad") requires cloud LLM roundtrips. | ⚡ **0ms Intent Fast-Path**<br>Deterministic regex-based NLU instantly executes common English & Hindi/Hinglish commands locally. |
 
 ---
 
@@ -72,74 +81,83 @@ Designed with an **Offline-First, Zero-Trust philosophy**, JARVIS operates seaml
 
 ## 🛠️ Tech Stack
 
-| Domain | Technology / Library | Purpose & Implementation Details |
-|---|---|---|
-| **Language & Core** | `Python 3.12+`, `asyncio`, `Pydantic v2` | Fully asynchronous, strongly typed core architecture |
-| **Desktop GUI** | `PySide6 (Qt 6.6+)` | Glassmorphic HUD overlay, animated state visualizer, system tray |
-| **Cloud LLM Providers** | Google Gemini (`gemini-2.5-flash`), Anthropic Claude, OpenAI | Cloud reasoning, deep context problem solving, multimodal vision |
-| **Local LLM Engine** | `Ollama` (`qwen2.5:3b`, `gemma3:4b`, `llama3.1:8b`) | Completely offline, air-gapped local reasoning and tool calling |
-| **Wake Word Detection**| `openwakeword` | Zero-latency local wake-word engine (*"Jarvis"*, *"Hey Jarvis"*) |
-| **Speech-to-Text (STT)**| `faster-whisper` (CTranslate2 int8) | Local multilingual speech transcription (English / Hindi / Hinglish) |
-| **Text-to-Speech (TTS)**| `Piper TTS` (ONNX Runtime) + `edge-tts` + `pyttsx3` | Natural local neural voice synthesis with cloud & SAPI5 fallbacks |
-| **Audio Processing** | `sounddevice`, `numpy`, `webrtcvad` | Low-latency 16kHz audio capture, AGC, and barge-in detection |
-| **Computer & OS Control**| `pywin32`, `pywinauto`, `psutil` | Native Win32 API window control, UIA automation, system telemetry |
-| **Browser Agent** | `Playwright` (Chromium) | Semantic DOM snapshotting, web browsing, form filling, web scraping |
+| Domain | Technology / Library | Role & Details |
+|:---|:---|:---|
+| **Core Architecture** | `Python 3.12+`, `asyncio`, `Pydantic v2` | Fully asynchronous, strongly typed core engine |
+| **Desktop GUI** | `PySide6 (Qt 6.6+)` | Frameless holographic HUD, animated visualizer orb, system tray |
+| **Cloud Intelligence** | Google Gemini (`gemini-2.5-flash`), Claude, OpenAI | Multimodal reasoning, code execution, complex contextual analysis |
+| **Local Intelligence** | `Ollama` (`qwen2.5:3b`, `gemma3:4b`, `llama3.1:8b`) | Completely air-gapped on-device neural reasoning |
+| **Wake-Word Engine** | `openwakeword` | Zero-latency local wake-word detector (*"Jarvis"*, *"Hey Jarvis"*) |
+| **Speech-to-Text (STT)**| `faster-whisper` (int8 CTranslate2) | Multilingual local speech transcription (English / Hindi / Hinglish) |
+| **Text-to-Speech (TTS)**| `Piper TTS` (ONNX) + `edge-tts` + `pyttsx3` | Natural local neural voice synthesis with cloud & SAPI5 fallbacks |
+| **Audio Pipeline** | `sounddevice`, `numpy`, `webrtcvad` | 16kHz stream processing, noise suppression, AGC, barge-in |
+| **Windows OS Control** | `pywin32`, `pywinauto`, `psutil` | Win32 API window manager, accessibility tree automation, telemetry |
+| **Web Browser Agent** | `Playwright` (Chromium) | Semantic DOM snapshotting, web browsing, form filling, web scraping |
 | **Vision & OCR** | `mss`, `Pillow`, `pytesseract` (Tesseract 5) | Ultra-fast screen capture and multilingual screen text extraction |
-| **Persistence & ORM** | `SQLAlchemy 2.0`, `aiosqlite`, SQLite | Async storage for conversations, memory, preferences, tasks, audit |
-| **Security & Vault** | `Windows DPAPI` (`CryptProtectData`), HMAC-SHA256 | TPM-backed credential storage, cryptographic immutable audit ledger |
-| **Testing & Quality** | `pytest`, `pytest-asyncio`, `httpx` MockTransport | 171 automated unit tests validating 100% of core and offline flows |
+| **Database & ORM** | `SQLAlchemy 2.0`, `aiosqlite`, SQLite | Async storage for conversations, memory, preferences, tasks, audit |
+| **Security & Vault** | `Windows DPAPI` (`CryptProtectData`), HMAC-SHA256 | TPM-backed hardware encryption, cryptographic immutable audit ledger |
+| **Testing Suite** | `pytest`, `pytest-asyncio`, `httpx` MockTransport | 171 automated unit tests validating 100% of core and offline flows |
 
 ---
 
 ## 🏗️ System Architecture
 
-The following diagram illustrates the high-level decoupled architecture: the **EventBus** sits at the center, isolating the GUI presentation layer from the core orchestration engine, security boundaries, and hardware adapters.
+The following diagram illustrates the multi-tier decoupled architecture: the **EventBus** acts as the central reactive message backbone, isolating the holographic PySide6 UI from core intelligence, security boundaries, and OS execution adapters.
 
 ```mermaid
 flowchart TD
+    %% Custom Cyberpunk Color Classes
+    classDef uiLayer fill:#070d1d,stroke:#00f0ff,stroke-width:2px,color:#f0f8ff,rx:10px,ry:10px;
+    classDef coreLayer fill:#0c152d,stroke:#7c4dff,stroke-width:2px,color:#f0f8ff,rx:10px,ry:10px;
+    classDef brainLayer fill:#160d2e,stroke:#c084fc,stroke-width:2px,color:#f3e8ff,rx:10px,ry:10px;
+    classDef voiceLayer fill:#041f17,stroke:#00ffa3,stroke-width:2px,color:#e6fff5,rx:10px,ry:10px;
+    classDef secLayer fill:#24060d,stroke:#ff2a55,stroke-width:2px,color:#ffebee,rx:10px,ry:10px;
+    classDef toolLayer fill:#0a192f,stroke:#38bdf8,stroke-width:2px,color:#e0f2fe,rx:10px,ry:10px;
+    classDef dbLayer fill:#1c1303,stroke:#ffb700,stroke-width:2px,color:#fffbeb,rx:10px,ry:10px;
+
     subgraph UI_Layer["🖥️ Frontend & Presentation Layer (PySide6)"]
-        HUD["Cyberpunk Dark-Glass HUD Overlay"]
-        Orb["Animated Multi-State Visualizer Orb"]
-        Tray["Windows System Tray Resident"]
-        Hotkeys["Global Hotkey Manager (Alt+J / F8 / Ctrl+Space)"]
+        HUD["Cyberpunk Dark-Glass HUD Overlay"]:::uiLayer
+        Orb["Animated Multi-State Glowing Orb"]:::uiLayer
+        Tray["Windows System Tray Resident"]:::uiLayer
+        Hotkeys["Global Hotkeys (Alt+J / F8 / Ctrl+Space)"]:::uiLayer
     end
 
     subgraph Core_Layer["⚡ Core Event & Decoupling Layer"]
-        Bus["Asynchronous EventBus (Pub/Sub)"]
-        Runtime["Runtime Composition Root (build_runtime)"]
+        Bus["Asynchronous EventBus (Pub/Sub Backbone)"]:::coreLayer
+        Runtime["Runtime Composition Root (build_runtime)"]:::coreLayer
     end
 
     subgraph Brain_Layer["🧠 Cognitive & Intelligence Layer"]
-        Intent["Deterministic Intent Fast-Path (0ms Regex NLU)"]
-        Router["ModelRouter & Failover Engine"]
-        CloudLLM["Cloud LLM: Google Gemini 2.5 Flash / Claude"]
-        LocalLLM["Local LLM: Ollama (Qwen2.5 / Gemma3 / Llama3.1)"]
+        Intent["Deterministic Intent Fast-Path (0ms Regex NLU)"]:::brainLayer
+        Router["ModelRouter & Hybrid Failover Engine"]:::brainLayer
+        CloudLLM["Cloud LLM: Google Gemini 2.5 Flash / Claude"]:::brainLayer
+        LocalLLM["Local LLM: Ollama (Qwen2.5 / Gemma3 / Llama3.1)"]:::brainLayer
     end
 
     subgraph Voice_Layer["🎙️ Local Voice Pipeline (100% Offline)"]
-        OWW["OpenWakeWord Engine ('Jarvis')"]
-        STT["Faster-Whisper STT (int8 Multilingual)"]
-        TTS["Piper Neural TTS (hi_IN / en_IN ONNX)"]
+        OWW["OpenWakeWord Engine ('Jarvis')"]:::voiceLayer
+        STT["Faster-Whisper STT (int8 Multilingual)"]:::voiceLayer
+        TTS["Piper Neural TTS (hi_IN / en_IN ONNX)"]:::voiceLayer
     end
 
     subgraph Security_Layer["🛡️ Zero-Trust Security Suite"]
-        DPAPI["Windows DPAPI Vault (TPM Hardware Encryption)"]
-        Perms["Permission Matrix (LOW to CRITICAL)"]
-        Sandbox["Anti-Malware & Anti-Ransomware Sandbox"]
-        Audit["HMAC SHA-256 Chained Audit Ledger"]
+        DPAPI["Windows DPAPI Vault (TPM Hardware Encryption)"]:::secLayer
+        Perms["Permission Matrix (LOW to CRITICAL)"]:::secLayer
+        Sandbox["Anti-Malware & Anti-Ransomware Sandbox"]:::secLayer
+        Audit["HMAC SHA-256 Chained Audit Ledger"]:::secLayer
     end
 
     subgraph Tool_Layer["🔧 Real-World Execution Adapters"]
-        Apps["App Discovery & Win32 Window Control"]
-        Files["Confined File System & Path Jail"]
-        Terminal["PowerShell / CMD Execution Engine"]
-        Browser["Playwright Headless/Headed Web Agent"]
-        Vision["MSS Screen Capture + Tesseract OCR"]
-        Tasks["Offline Task Companion & Productivity"]
+        Apps["App Discovery & Win32 Window Control"]:::toolLayer
+        Files["Confined File System & Path Jail"]:::toolLayer
+        Terminal["PowerShell / CMD Execution Engine"]:::toolLayer
+        Browser["Playwright Headless/Headed Web Agent"]:::toolLayer
+        Vision["MSS Screen Capture + Tesseract OCR"]:::toolLayer
+        Tasks["Offline Task Companion & Productivity"]:::toolLayer
     end
 
     subgraph Storage_Layer["🗄️ Persistence Layer (Async SQLite)"]
-        DB[("SQLite Database (SQLAlchemy 2.0 + aiosqlite)")]
+        DB[("SQLite Database (SQLAlchemy 2.0 + aiosqlite)")]:::dbLayer
     end
 
     %% Wiring
@@ -153,7 +171,7 @@ flowchart TD
     Brain_Layer --> Intent
     Intent -->|Match Found (~0ms)| Security_Layer
     Intent -->|Complex Query| Router
-    Router -->|Online| CloudLLM
+    Router -->|Online Mode| CloudLLM
     Router -->|Offline / Privacy Mode| LocalLLM
     CloudLLM --> Security_Layer
     LocalLLM --> Security_Layer
@@ -164,6 +182,15 @@ flowchart TD
     Security_Layer --> Audit
     Tool_Layer --> DB
     Brain_Layer --> DB
+
+    %% Subgraph Styling
+    style UI_Layer fill:#03060f,stroke:#00f0ff,stroke-width:1px,color:#00f0ff,stroke-dasharray: 4 4;
+    style Core_Layer fill:#050914,stroke:#7c4dff,stroke-width:1px,color:#7c4dff,stroke-dasharray: 4 4;
+    style Brain_Layer fill:#0a0518,stroke:#c084fc,stroke-width:1px,color:#c084fc,stroke-dasharray: 4 4;
+    style Voice_Layer fill:#02100c,stroke:#00ffa3,stroke-width:1px,color:#00ffa3,stroke-dasharray: 4 4;
+    style Security_Layer fill:#140307,stroke:#ff2a55,stroke-width:1px,color:#ff2a55,stroke-dasharray: 4 4;
+    style Tool_Layer fill:#040e1a,stroke:#38bdf8,stroke-width:1px,color:#38bdf8,stroke-dasharray: 4 4;
+    style Storage_Layer fill:#100b02,stroke:#ffb700,stroke-width:1px,color:#ffb700,stroke-dasharray: 4 4;
 ```
 
 ---
@@ -176,36 +203,43 @@ Every user request (spoken or typed) passes through deterministic normalization,
 
 ```mermaid
 flowchart TD
-    Start([User Input: Voice or Text]) --> InputType{Input Type?}
-    InputType -->|Microphone| VAD[Capture Audio & VAD Silence]
-    VAD --> Whisper[Faster-Whisper STT Transcription]
-    Whisper --> Normalize[Text Normalization & Wake Stripping]
+    classDef startNode fill:#070d1d,stroke:#00f0ff,stroke-width:2px,color:#f0f8ff,rx:20px,ry:20px;
+    classDef processNode fill:#0c152d,stroke:#38bdf8,stroke-width:2px,color:#f0f8ff,rx:8px,ry:8px;
+    classDef decisionNode fill:#160d2e,stroke:#c084fc,stroke-width:2px,color:#f3e8ff;
+    classDef dangerNode fill:#24060d,stroke:#ff2a55,stroke-width:2px,color:#ffebee,rx:8px,ry:8px;
+    classDef warningNode fill:#1c1303,stroke:#ffb700,stroke-width:2px,color:#fffbeb,rx:8px,ry:8px;
+    classDef successNode fill:#041f17,stroke:#00ffa3,stroke-width:2px,color:#e6fff5,rx:8px,ry:8px;
+
+    Start([User Input: Voice or Text]):::startNode --> InputType{Input Mode?}:::decisionNode
+    InputType -->|Microphone| VAD[Capture Audio & VAD Silence]:::processNode
+    VAD --> Whisper[Faster-Whisper STT Transcription]:::processNode
+    Whisper --> Normalize[Text Normalization & Wake Stripping]:::processNode
     InputType -->|Text / HUD| Normalize
 
-    Normalize --> FastPath{Intent Fast-Path Match?}
-    FastPath -->|Yes: Regex Matched| ToolSelect[Select Builtin Tool + Args]
-    FastPath -->|No: Complex Query| LLMSelect[Model Router -> Gemini / Ollama]
+    Normalize --> FastPath{Intent Fast-Path Match?}:::decisionNode
+    FastPath -->|Yes: Regex Matched| ToolSelect[Select Builtin Tool + Args]:::processNode
+    FastPath -->|No: Complex Query| LLMSelect[Model Router -> Gemini / Ollama]:::processNode
     LLMSelect --> ToolSelect
 
-    ToolSelect --> RiskCheck{Risk Level Assessment}
-    RiskCheck -->|CRITICAL| BlockAction[⛔ Hard Sandbox Block & Alert]
-    RiskCheck -->|HIGH / MEDIUM| PermGrant{Standing Grant in DB?}
-    RiskCheck -->|LOW| Execute[Execute Real Tool on OS]
+    ToolSelect --> RiskCheck{Risk Assessment}:::decisionNode
+    RiskCheck -->|CRITICAL| BlockAction[⛔ Hard Sandbox Block & Alert]:::dangerNode
+    RiskCheck -->|HIGH / MEDIUM| PermGrant{Standing Grant in DB?}:::warningNode
+    RiskCheck -->|LOW| Execute[Execute Real Tool on OS]:::processNode
 
     PermGrant -->|Yes| Execute
-    PermGrant -->|No| ConfirmModal[Prompt User Confirmation via HUD]
-    ConfirmModal -->|Denied| DenyResult[Return User Denied Notice]
+    PermGrant -->|No| ConfirmModal[Prompt User Confirmation via HUD]:::warningNode
+    ConfirmModal -->|Denied| DenyResult[Return User Denied Notice]:::dangerNode
     ConfirmModal -->|Approved| Execute
 
-    Execute --> SelfVerify{Tool Self-Verification}
-    SelfVerify -->|Verified True| AuditLog[Cryptographic Audit Log + Redact Secrets]
-    SelfVerify -->|Failed / Incomplete| ErrorHandler[Self-Healing Diagnosis & Proposal]
+    Execute --> SelfVerify{Tool Self-Verification}:::decisionNode
+    SelfVerify -->|Verified True| AuditLog[Cryptographic Audit Log + Redact Secrets]:::successNode
+    SelfVerify -->|Failed / Incomplete| ErrorHandler[Self-Healing Diagnosis & Proposal]:::warningNode
 
-    AuditLog --> FormatReply[Synthesize Response Text]
-    FormatReply --> SpeechCheck{Voice Mode Active?}
-    SpeechCheck -->|Yes| PiperStream[Piper Neural TTS Stream to Speaker]
-    SpeechCheck -->|No| HUDUpdate[Render in Dark-Glass HUD Chat]
-    PiperStream --> Finish([End of Turn])
+    AuditLog --> FormatReply[Synthesize Response Text]:::processNode
+    FormatReply --> SpeechCheck{Voice Mode Active?}:::decisionNode
+    SpeechCheck -->|Yes| PiperStream[Piper Neural TTS Stream to Speaker]:::successNode
+    SpeechCheck -->|No| HUDUpdate[Render in Dark-Glass HUD Chat]:::processNode
+    PiperStream --> Finish([End of Turn]):::startNode
     HUDUpdate --> Finish
     BlockAction --> FormatReply
     DenyResult --> FormatReply
@@ -227,22 +261,38 @@ sequenceDiagram
     participant TTS as 🗣️ Piper / Edge TTS
     participant Spk as 🔊 Audio Output
 
-    loop Continuous Monitoring
+    rect rgb(7, 13, 29)
+        Note over Mic,OWW: Continuous Offline Wake-Word Detection
         User->>Mic: "Hey Jarvis"
         Mic->>OWW: Stream 80ms audio frames
-        OWW-->>Engine: Wake word confirmed (> 0.15 score)
+        OWW-->>Engine: Wake word confirmed (> 0.15 confidence)
     end
-    Engine->>Spk: Play chime / "Yes, sir?"
-    User->>Mic: "Mere pending tasks batao aur Chrome kholo"
-    Mic->>STT: Audio stream until VAD silence
-    STT-->>Engine: Transcript: "Mere pending tasks batao aur Chrome kholo"
-    Engine->>Engine: Fast-Path / LLM Tool Dispatch
-    Engine-->>TTS: Stream response sentence tokens
-    TTS->>Spk: Natural neural voice output
+
+    rect rgb(4, 31, 23)
+        Note over Engine,Spk: Immediate Audio Acknowledgment
+        Engine->>Spk: Play chime / "Yes, sir?"
+    end
+
+    rect rgb(22, 13, 46)
+        Note over Mic,STT: Multilingual VAD Capture & Transcription
+        User->>Mic: "Mere pending tasks batao aur Chrome kholo"
+        Mic->>STT: Audio stream until VAD silence
+        STT-->>Engine: Transcript: "Mere pending tasks batao aur Chrome kholo"
+    end
+
+    rect rgb(12, 21, 45)
+        Note over Engine,TTS: Execution & Streaming Neural Speech
+        Engine->>Engine: Fast-Path / LLM Tool Dispatch
+        Engine-->>TTS: Stream response sentence tokens
+        TTS->>Spk: Natural neural voice output
+    end
+
     opt Spoken Barge-in Interrupt
-        User->>Mic: "Stop" / "Ruk jao"
-        Mic->>Engine: Interrupt token detected
-        Engine->>Spk: Instantly abort audio playback
+        rect rgb(36, 6, 13)
+            User->>Mic: "Stop" / "Ruk jao"
+            Mic->>Engine: Interrupt token detected
+            Engine->>Spk: Instantly abort audio playback
+        end
     end
 ```
 
@@ -327,15 +377,25 @@ Security is built into the foundation of JARVIS, not tacked on as an afterthough
 
 ```mermaid
 flowchart LR
-    CMD[Incoming Command / Tool Call] --> Classifier{Risk Classifier}
-    Classifier -->|CRITICAL| Block[⛔ Hard Refusal / Alert]
-    Classifier -->|HIGH / MEDIUM| Gate[🔐 User Confirmation Modal]
-    Classifier -->|LOW| Exec[⚡ Direct Sandbox Execution]
+    classDef cmdNode fill:#070d1d,stroke:#00f0ff,stroke-width:2px,color:#f0f8ff,rx:8px,ry:8px;
+    classDef classNode fill:#160d2e,stroke:#c084fc,stroke-width:2px,color:#f3e8ff;
+    classDef blockNode fill:#24060d,stroke:#ff2a55,stroke-width:2px,color:#ffebee,rx:8px,ry:8px;
+    classDef gateNode fill:#1c1303,stroke:#ffb700,stroke-width:2px,color:#fffbeb,rx:8px,ry:8px;
+    classDef execNode fill:#041f17,stroke:#00ffa3,stroke-width:2px,color:#e6fff5,rx:8px,ry:8px;
+    classDef logNode fill:#0c152d,stroke:#7c4dff,stroke-width:2px,color:#f0f8ff,rx:8px,ry:8px;
+
+    CMD[Incoming Command / Tool Call]:::cmdNode --> Classifier{Risk Classifier}:::classNode
+    Classifier -->|CRITICAL| Block[⛔ Hard Refusal / Alert]:::blockNode
+    Classifier -->|HIGH / MEDIUM| Gate[🔐 User Confirmation Modal]:::gateNode
+    Classifier -->|LOW| Exec[⚡ Direct Sandbox Execution]:::execNode
     Gate -->|User Approves| Exec
-    Gate -->|User Denies| Abort[❌ Execution Aborted]
-    Exec --> Fence[🛡️ fence_untrusted External Content]
-    Fence --> Ledger[📜 HMAC-SHA256 Chained Audit Entry]
+    Gate -->|User Denies| Abort[❌ Execution Aborted]:::blockNode
+    Exec --> Fence[🛡️ fence_untrusted External Content]:::execNode
+    Fence --> Ledger[📜 HMAC-SHA256 Chained Audit Entry]:::logNode
 ```
+
+> [!CAUTION]
+> **Zero Tolerance for Destructive Commands**: Dangerous command patterns like shadow-copy deletion (`vssadmin`), raw volume writing (`diskpart`), or unverified download-execute pipelines (`iwr | iex`) are classified as **CRITICAL** and hard-blocked immediately.
 
 ### 1. Windows DPAPI Vault (`app/security/vault.py`)
 Hardware/OS-backed encrypted secret storage using the Windows Data Protection API (`CryptProtectData`). Secrets are encrypted with the logged-in user's master Windows key and TPM chip. Plaintext API keys never touch disk.
@@ -364,7 +424,7 @@ JARVIS can be set up once and subsequently used in completely air-gapped environ
 ### Local Model RAM Sizing Matrix
 
 | System RAM | Recommended Model | Engine | Disk Footprint | Inference Speed |
-|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|
 | **4 GB** | `qwen2.5:1.5b` / `tinyllama` | Ollama | ~1.0 GB | ~35 tokens/sec |
 | **8 GB** | `qwen2.5:3b` / `gemma3:4b` | Ollama | ~2.5 GB | ~28 tokens/sec |
 | **16 GB+** | `qwen2.5:7b` / `llama3.1:8b` | Ollama | ~4.7 GB | ~18 tokens/sec |
@@ -528,7 +588,7 @@ python run.py startup install --speak
 ## ⌨️ Shortcuts & Voice Commands
 
 | Action | Trigger / Shortcut | Description |
-|---|---|---|
+|:---|:---|:---|
 | **Toggle HUD Window** | `Alt + J` / `F8` / `Ctrl + Shift + A` | Summons or dismisses the glassmorphic HUD from anywhere |
 | **Push-to-Talk** | `Ctrl + Space` or Click Glowing Orb | Manually triggers listening mode without speaking wake-word |
 | **Emergency Stop** | `Ctrl + Shift + Space` | Aborts ongoing tool execution and TTS audio playback |
@@ -557,11 +617,8 @@ Sample Test Results:
 171 passed, 0 skipped, 0 failed in 18.42s
 ```
 
-Test Coverage Highlights:
-- `test_offline_voice_loop.py`: Validates socket-blocked voice loops with simulated audio buffers.
-- `test_offline_brain.py`: Verifies zero-loss failover between Gemini and Ollama.
-- `test_security.py`: Asserts DPAPI encryption and anti-ransomware sandbox interceptions.
-- `test_tools.py`: Validates honest real-world self-verification on files and processes.
+> [!IMPORTANT]
+> **100% Deterministic Testing**: The test suite validates socket-blocked offline voice loops, hybrid brain failovers, DPAPI encryption, and real OS tool verification with zero flaky tests.
 
 ---
 
