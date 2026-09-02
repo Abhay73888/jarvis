@@ -8,27 +8,32 @@ Includes:
 from __future__ import annotations
 
 import math
-from typing import Optional
 
 import psutil
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
-from PySide6.QtGui import QBrush, QColor, QFont, QLinearGradient, QPainter, QPainterPath, QPen, QRadialGradient
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QTextEdit, QVBoxLayout, QWidget
+from PySide6.QtGui import (
+    QBrush,
+    QColor,
+    QPainter,
+    QPen,
+    QRadialGradient,
+)
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QVBoxLayout,
+    QWidget,
+)
 
 from app.ui.theme import (
     COLOR_ACCENT,
-    COLOR_ACCENT_HOVER,
-    COLOR_ACCENT_MUTED,
-    COLOR_BG,
     COLOR_BORDER,
-    COLOR_CARD,
     COLOR_DANGER,
     COLOR_SUCCESS,
     COLOR_SURFACE,
-    COLOR_TEXT_MUTED,
     COLOR_TEXT_PRIMARY,
     COLOR_TEXT_SECONDARY,
-    COLOR_WARNING,
 )
 
 
@@ -40,7 +45,7 @@ class VoiceVisualizer(QWidget):
     - SPEAKING: Dynamic acoustic wave bars.
     """
 
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumSize(120, 120)
         self.setMaximumHeight(140)
@@ -148,7 +153,7 @@ class VoiceVisualizer(QWidget):
 class SystemStatsBar(QFrame):
     """Telemetry bar showing real-time CPU, RAM, and Battery percentages."""
 
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("StatsBar")
         layout = QHBoxLayout(self)
@@ -192,7 +197,7 @@ class SystemStatsBar(QFrame):
 class ChatBubble(QFrame):
     """A styled chat bubble for User, JARVIS, or Tool notifications."""
 
-    def __init__(self, role: str, text: str, actions: Optional[list] = None, parent: Optional[QWidget] = None) -> None:
+    def __init__(self, role: str, text: str, actions: list | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("ChatBubble")
 

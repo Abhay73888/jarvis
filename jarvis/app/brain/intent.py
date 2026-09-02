@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-_WAKE = re.compile(r"\b(hey\s+|ok\s+)?jarvis[,!.\s]*", re.I)
+_WAKE = re.compile(r"\b(hey\s+|ok\s+)?jarvis[,!.\s]*", re.IGNORECASE)
 _FILLERS = {
     "please", "karo", "kar", "do", "dena", "kya", "mujhe", "mera", "mere", "liye",
     "for", "me", "the", "a", "an", "can", "you", "could", "would", "will", "hey",
@@ -57,39 +57,39 @@ def _strip_fillers(tokens: list[str]) -> str:
 
 # ------------------------------------------------------------------ patterns
 
-_OPEN = re.compile(r"(?:khol\s?do|kholo|kholna|khol|open|launch|start|chalao|chalu\s?karo|run)\b", re.I)
-_CLOSE = re.compile(r"(?:band\s?karo|band\s?kar|band\s?do|band|close|quit|exit|kill)\b", re.I)
+_OPEN = re.compile(r"(?:khol\s?do|kholo|kholna|khol|open|launch|start|chalao|chalu\s?karo|run)\b", re.IGNORECASE)
+_CLOSE = re.compile(r"(?:band\s?karo|band\s?kar|band\s?do|band|close|quit|exit|kill)\b", re.IGNORECASE)
 _SYSINFO = re.compile(r"\b(system|laptop|pc|computer)\b.*\b(info|information|detail|details|status|report|diagnostic|check)\b"
-                      r"|(?:why\s+is\s+my|mera|mere)\s+(?:laptop|pc|system|computer)\s+(?:slow|slow\s?ho\s?raha?|hang\s?ho\s?raha?)", re.I)
-_RAM = re.compile(r"\b(ram|memory)\b.*\b(usage|kitna|kitni|how\s+much|percent|free)\b", re.I)
-_CPU = re.compile(r"\b(cpu|processor)\b.*\b(usage|kitna|how\s+much|percent)\b", re.I)
-_BATTERY = re.compile(r"\b(battery|charge)\b.*\b(kitna|kitni|percent|how\s+much|status|remaining)\b", re.I)
+                      r"|(?:why\s+is\s+my|mera|mere)\s+(?:laptop|pc|system|computer)\s+(?:slow|slow\s?ho\s?raha?|hang\s?ho\s?raha?)", re.IGNORECASE)
+_RAM = re.compile(r"\b(ram|memory)\b.*\b(usage|kitna|kitni|how\s+much|percent|free)\b", re.IGNORECASE)
+_CPU = re.compile(r"\b(cpu|processor)\b.*\b(usage|kitna|how\s+much|percent)\b", re.IGNORECASE)
+_BATTERY = re.compile(r"\b(battery|charge)\b.*\b(kitna|kitni|percent|how\s+much|status|remaining)\b", re.IGNORECASE)
 _PROCESSES = re.compile(r"\b(kaun\s?kaun\s?se|which|what|running|chal\s?rahe|chal\s?rahe\s?hain|active)\b.*\b(apps?|applications?|programs?|processes)\b"
-                        r"|\b(task\s+manager|running\s+apps?|open\s+apps?)\b", re.I)
+                        r"|\b(task\s+manager|running\s+apps?|open\s+apps?)\b", re.IGNORECASE)
 _SCREENSHOT = re.compile(r"\b(screenshot|screen\s+shot|screen\s+capture)\b.*\b(lo|lena|le|take|capture|click)\b"
                          r"|^(take|le|lena|lo)\b.*\b(screenshot|screen\s+shot)\b$"
-                         r"|^screenshot$", re.I)
+                         r"|^screenshot$", re.IGNORECASE)
 _TIME = re.compile(r"\b(time|samay|baje|baja)\b.*\b(kya|kitne|what|how\s+much|bolo|batao|tell)\b"
-                   r"|^(what('| i)?s\s+the\s+time|time\s+ky[aa]\s+hua|kitne\s+baje\s+hain)$", re.I)
-_DATE = re.compile(r"\b(date|tareekh|din)\b.*\b(kya|what|aaj|today|bolo|batao)\b|aaj\s+(?:ki\s+)?(?:date|tareekh)", re.I)
-_SEARCH1 = re.compile(r"(?:search|dhundo|dhoondo|khojo)\s+(?:for\s+|karo\s+|kar\s+)?(.+)$", re.I)
-_SEARCH3 = re.compile(r"(.+?)\s+(?:search|dhundo|dhoondo|khojo)\s*(?:karo|kar|do)?$", re.I)
-_SEARCH2 = re.compile(r"(\w+)\s+(?:pe|par|on|in)\s+(.+?)\s*(?:search|dhundo|dhoondo|khojo)\s*(?:karo|kar)?$", re.I)
+                   r"|^(what('| i)?s\s+the\s+time|time\s+ky[aa]\s+hua|kitne\s+baje\s+hain)$", re.IGNORECASE)
+_DATE = re.compile(r"\b(date|tareekh|din)\b.*\b(kya|what|aaj|today|bolo|batao)\b|aaj\s+(?:ki\s+)?(?:date|tareekh)", re.IGNORECASE)
+_SEARCH1 = re.compile(r"(?:search|dhundo|dhoondo|khojo)\s+(?:for\s+|karo\s+|kar\s+)?(.+)$", re.IGNORECASE)
+_SEARCH3 = re.compile(r"(.+?)\s+(?:search|dhundo|dhoondo|khojo)\s*(?:karo|kar|do)?$", re.IGNORECASE)
+_SEARCH2 = re.compile(r"(\w+)\s+(?:pe|par|on|in)\s+(.+?)\s*(?:search|dhundo|dhoondo|khojo)\s*(?:karo|kar)?$", re.IGNORECASE)
 _NEWFOLDER = re.compile(r"(?:folder|file)\s+(?:banao|bana|create\s+kar[oa]|create)\s*(?:naam\s*(?:ka|ki|se)|name(?:d)?)?\s*[\"']?([^\"']+)[\"']?$"
-                        r"|(?:create|banao|bana)\s+(?:a\s+)?(?:folder|file)\s+(?:called|named|naam\s*ka|naam\s*ki)?\s*[\"']?([^\"']+)[\"']?$", re.I)
+                        r"|(?:create|banao|bana)\s+(?:a\s+)?(?:folder|file)\s+(?:called|named|naam\s*ka|naam\s*ki)?\s*[\"']?([^\"']+)[\"']?$", re.IGNORECASE)
 _FINDFILE = re.compile(
     r"(?i)(?:find|search|dhundo|dhoondo|khojo|locate)\s+(?:my\s+|meri\s+|mere\s+)?(.+?)(?:\s*(?:file|files|pdf|pdfs|document|documents), re.I)?$"
     r"|(.+?)\s*(?:file|files|pdf|pdfs|document|documents)?\s+(?:dhundo|dhoondo|khojo)$")
-_REMINDER = re.compile(r"(?:reminder|yaad)\s*(?:set\s*karo|set\s+kar[oa]|dilana|dila\s?do|set)?\s*[:]?\s*(.+)?$", re.I)
-_STOP = re.compile(r"^(stop|stop\s*it|cancel|abort|ruk\s*jao|ruko|band\s+karo|khatam\s*karo)$", re.I)
-_LOCKDOWN = re.compile(r"\b(protocol\s+zero|code\s+red|emergency\s+lockdown|lockdown|lock\s+(?:the\s+)?(?:pc|laptop|screen|computer)|screen\s+lock|lock\s+karo)\b", re.I)
+_REMINDER = re.compile(r"(?:reminder|yaad)\s*(?:set\s*karo|set\s+kar[oa]|dilana|dila\s?do|set)?\s*[:]?\s*(.+)?$", re.IGNORECASE)
+_STOP = re.compile(r"^(stop|stop\s*it|cancel|abort|ruk\s*jao|ruko|band\s+karo|khatam\s*karo)$", re.IGNORECASE)
+_LOCKDOWN = re.compile(r"\b(protocol\s+zero|code\s+red|emergency\s+lockdown|lockdown|lock\s+(?:the\s+)?(?:pc|laptop|screen|computer)|screen\s+lock|lock\s+karo)\b", re.IGNORECASE)
 
 
 
 def _agent_browser_ok() -> bool:
     """True when the Playwright agent browser can be used (cached import check)."""
-    from importlib.util import find_spec
     import os
+    from importlib.util import find_spec
     return find_spec("playwright") is not None and \
         os.environ.get("JARVIS_NO_AGENT_BROWSER", "") != "1"
 
@@ -142,7 +142,7 @@ class IntentRouter:
             obj = self._object_after_verb(clean, _OPEN).lower()
             if not obj:
                 return None
-            if obj.lower() in _SITES or _DOMAINISH.match(obj.lower(), re.I):
+            if obj.lower() in _SITES or _DOMAINISH.match(obj.lower(), re.IGNORECASE):
                 return Intent(tool="open_url", args={"url": _SITES.get(obj.lower(), obj)},
                               speech=f"Opening {obj}.")
             if self._is_ordinal_selection(obj):
@@ -254,9 +254,9 @@ class IntentRouter:
     def _object_after_verb(self, text: str, verb: re.Pattern[str]) -> str:
         """Object = tokens minus the verb phrase and fillers, wherever the verb sits."""
         tokens = text.split()
-        verb_words = {"khol", "kholo", "kholna", "khol", "band", "close", "quit", "exit",
+        verb_words = {"khol", "kholo", "kholna", "band", "close", "quit", "exit",
                       "kill", "open", "launch", "start", "run", "chalao", "chalu",
-                      "karo", "kar", "do", "kholna"}
+                      "karo", "kar", "do"}
         kept = [t for t in tokens if t.lower() not in verb_words]
         obj = _strip_fillers(kept)
         return obj

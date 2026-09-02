@@ -4,7 +4,12 @@ from __future__ import annotations
 from pathlib import Path
 
 import sqlalchemy as sa
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from app.core.logging import get_logger
 from app.database.models import Base

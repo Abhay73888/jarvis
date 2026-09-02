@@ -8,7 +8,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any
 
 
 def build_greeting(
@@ -62,7 +62,7 @@ def get_windows_startup_dir() -> Path:
     return Path.home() / "AppData" / "Roaming" / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"
 
 
-def get_startup_bat_path(target_dir: Optional[Path] = None) -> Path:
+def get_startup_bat_path(target_dir: Path | None = None) -> Path:
     """Return the path to JARVIS-Greeting.bat."""
     base_dir = target_dir or get_windows_startup_dir()
     return base_dir / "JARVIS-Greeting.bat"
@@ -72,7 +72,7 @@ def install_startup_bat(
     project_root: Path,
     speak: bool = False,
     console: bool = False,
-    target_dir: Optional[Path] = None,
+    target_dir: Path | None = None,
 ) -> Path:
     """Install JARVIS-Greeting.bat into the user's Startup folder.
 
@@ -99,7 +99,7 @@ def install_startup_bat(
     return bat_path
 
 
-def remove_startup_bat(target_dir: Optional[Path] = None) -> bool:
+def remove_startup_bat(target_dir: Path | None = None) -> bool:
     """Remove JARVIS-Greeting.bat from the user's Startup folder."""
     bat_path = get_startup_bat_path(target_dir)
     if bat_path.exists():
@@ -108,7 +108,7 @@ def remove_startup_bat(target_dir: Optional[Path] = None) -> bool:
     return False
 
 
-def get_startup_status(target_dir: Optional[Path] = None) -> dict[str, Any]:
+def get_startup_status(target_dir: Path | None = None) -> dict[str, Any]:
     """Check whether JARVIS startup greeting is installed."""
     bat_path = get_startup_bat_path(target_dir)
     installed = bat_path.exists()

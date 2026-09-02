@@ -9,10 +9,9 @@ Integrates:
 from __future__ import annotations
 
 import asyncio
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from PySide6.QtCore import QPoint, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QColor, QFont, QIcon
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -21,7 +20,6 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QPushButton,
     QScrollArea,
-    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -32,19 +30,15 @@ from app.ui.components import ChatBubble, SystemStatsBar, VoiceVisualizer
 from app.ui.theme import (
     COLOR_ACCENT,
     COLOR_ACCENT_MUTED,
-    COLOR_BG,
     COLOR_BORDER,
     COLOR_CARD,
     COLOR_DANGER,
     COLOR_SUCCESS,
     COLOR_SURFACE,
-    COLOR_TEXT_MUTED,
-    COLOR_TEXT_PRIMARY,
     COLOR_TEXT_SECONDARY,
     COLOR_WARNING,
     STYLESHEET,
 )
-
 
 
 class AsyncWorker(QThread):
@@ -80,7 +74,7 @@ class MainWindow(QMainWindow):
         engine: AgentEngine,
         bus: EventBus,
         voice_listener=None,
-        on_close_to_tray_callback: Optional[Callable[[], None]] = None,
+        on_close_to_tray_callback: Callable[[], None] | None = None,
     ) -> None:
         super().__init__()
         self.engine = engine
@@ -226,10 +220,10 @@ class MainWindow(QMainWindow):
         else:
             self.status_badge.setStyleSheet(f"color: {COLOR_TEXT_SECONDARY}; background-color: rgba(255, 255, 255, 0.05); border: 1px solid {COLOR_BORDER}; border-radius: 10px; padding: 2px 10px;")
 
-    def _on_message_received(self, role: str, text: str, actions: Optional[list]) -> None:
+    def _on_message_received(self, role: str, text: str, actions: list | None) -> None:
         self.add_message(role, text, actions)
 
-    def add_message(self, role: str, text: str, actions: Optional[list] = None) -> None:
+    def add_message(self, role: str, text: str, actions: list | None = None) -> None:
         bubble = ChatBubble(role, text, actions, self.scroll_content)
         # Insert before stretch item at the end
         count = self.chat_layout.count()

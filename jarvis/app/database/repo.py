@@ -6,7 +6,15 @@ from datetime import datetime
 from sqlalchemy import delete, desc, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models import Conversation, MemoryItem, Message, PermissionGrant, Preference, TaskRecord, ToolUsage
+from app.database.models import (
+    Conversation,
+    MemoryItem,
+    Message,
+    PermissionGrant,
+    Preference,
+    TaskRecord,
+    ToolUsage,
+)
 from app.security.redaction import redact_mapping
 
 

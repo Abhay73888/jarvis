@@ -1,6 +1,5 @@
 """Tests for Voice Synthesizer and Listener components."""
-import pytest
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 from app.core.events import EventBus
 from app.voice.listener import VoiceListener

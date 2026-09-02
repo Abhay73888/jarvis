@@ -75,7 +75,7 @@ class TerminalExecuteTool(BaseTool):
             stdin=asyncio.subprocess.DEVNULL)
         try:
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=args["timeout_s"])
-        except asyncio.TimeoutError:
+        except TimeoutError:
             proc.kill()
             await proc.wait()
             return ToolResult(False, f"The command didn't finish within {args['timeout_s']}s and was stopped.",
@@ -134,7 +134,7 @@ class RunPythonTool(BaseTool):
             *cmd, cwd=str(cwd), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         try:
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=args["timeout_s"])
-        except asyncio.TimeoutError:
+        except TimeoutError:
             proc.kill()
             await proc.wait()
             return ToolResult(False, f"Python didn't finish within {args['timeout_s']}s.", verified=True)

@@ -1,22 +1,20 @@
 """Unit tests for Time-Aware Greeting, TTS Manager, and Provider SSE Streaming."""
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from app.brain.greeting import (
     build_greeting,
-    get_startup_bat_path,
     get_startup_status,
     install_startup_bat,
     remove_startup_bat,
 )
-from app.brain.provider import ChatMessage, ChatResponse, ModelEntry, StreamEvent, ToolCall
+from app.brain.provider import ChatMessage, ModelEntry, StreamEvent
 from app.brain.providers.gemini import GeminiProvider
 from app.brain.providers.openai_compat import OpenAICompatibleProvider
 from app.voice.tts import TTSManager, split_text_into_chunks
-
 
 # ==============================================================================
 # Feature 1: Time-Aware Greeting Tests

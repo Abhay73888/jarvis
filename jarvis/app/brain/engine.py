@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.brain.intent import Intent, IntentRouter
-from app.brain.provider import ChatMessage, LLMProvider
+from app.brain.provider import ChatMessage, ChatResponse, LLMProvider
 from app.brain.router import ModelRouter
 from app.config.settings import Settings
 from app.core.events import EventBus, Topics
@@ -93,7 +93,7 @@ class AgentEngine:
             text = await self._llm_turn(provider, user_text, actions)
         except asyncio.CancelledError:
             text = "Stopped."
-        except Exception as exc:  # noqa: BLE001 — friendly errors (§42)
+        except Exception as exc:
             friendly = getattr(exc, "friendly", None)
             text = friendly if friendly else "I hit an unexpected problem handling that."
             if self._settings.dev.enabled:

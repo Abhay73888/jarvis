@@ -34,7 +34,7 @@ _INJECTION_MARKERS = re.compile(
 )
 
 # Markdown image exfiltration pattern: ![...](https://...?...{leak})
-_EXFILTRATION_PATTERN = re.compile(r"!\[.*?\]\((https?://[^\s\)]+)\)", re.I)
+_EXFILTRATION_PATTERN = re.compile(r"!\[.*?\]\((https?://[^\s\)]+)\)", re.IGNORECASE)
 
 
 def sanitize_text(text: str) -> str:

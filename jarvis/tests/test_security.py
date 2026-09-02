@@ -5,7 +5,6 @@ from app.security.injection import detect_injection, fence_untrusted
 from app.security.redaction import redact, redact_mapping, register_secret
 from app.security.risk import RiskLevel, classify_command
 
-
 # ------------------------------------------------------------------ redaction
 
 def test_redacts_openai_key_shape():

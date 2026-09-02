@@ -9,7 +9,7 @@ import hashlib
 import json
 import time
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from app.core.logging import get_logger
 from app.utils.paths import get_paths
@@ -18,7 +18,7 @@ log = get_logger("security.audit")
 
 
 class AuditLedger:
-    def __init__(self, ledger_path: Optional[Path] = None) -> None:
+    def __init__(self, ledger_path: Path | None = None) -> None:
         self.ledger_path = ledger_path or (get_paths().logs / "security_audit.jsonl")
         self._last_hash = self._get_tail_hash()
 

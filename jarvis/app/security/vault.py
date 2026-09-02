@@ -11,7 +11,6 @@ import ctypes.wintypes
 import json
 import sys
 from pathlib import Path
-from typing import Optional
 
 from app.core.logging import get_logger
 from app.utils.paths import get_paths
@@ -95,7 +94,7 @@ def _crypt_unprotect_data(encrypted_data: bytes, entropy: bytes = b"JARVIS_VAULT
 class CredentialVault:
     """Secure encrypted vault stored at data/vault.enc."""
 
-    def __init__(self, vault_path: Optional[Path] = None) -> None:
+    def __init__(self, vault_path: Path | None = None) -> None:
         self.vault_path = vault_path or (get_paths().data / "vault.enc")
 
     def set_secret(self, key: str, value: str) -> None:
@@ -105,7 +104,7 @@ class CredentialVault:
         self._write_vault(secrets)
         log.info("stored encrypted secret '%s' in DPAPI vault", key)
 
-    def get_secret(self, key: str, default: Optional[str] = None) -> Optional[str]:
+    def get_secret(self, key: str, default: str | None = None) -> str | None:
         """Retrieve and decrypt a secret from the vault."""
         secrets = self._read_vault()
         return secrets.get(key, default)

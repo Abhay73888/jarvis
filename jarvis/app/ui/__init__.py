@@ -11,4 +11,4 @@ from app.ui.app import run_gui_app
 from app.ui.tray import JarvisTrayIcon
 from app.ui.window import MainWindow
 
-__all__ = ["run_gui_app", "MainWindow", "JarvisTrayIcon"]
+__all__ = ["JarvisTrayIcon", "MainWindow", "run_gui_app"]

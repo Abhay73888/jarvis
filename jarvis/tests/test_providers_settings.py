@@ -7,10 +7,10 @@ import json
 import httpx
 import pytest
 
+from app.brain.provider import ChatMessage
 from app.brain.providers.anthropic import AnthropicProvider
 from app.brain.providers.openai_compat import OpenAICompatibleProvider
-from app.brain.provider import ChatMessage
-from app.config.settings import ModelEntry, Settings
+from app.config.settings import ModelEntry
 from app.core.exceptions import ConfigError, ProviderError
 
 

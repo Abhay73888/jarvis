@@ -103,8 +103,9 @@ async def test_gemini_error_maps_friendly(monkeypatch):
 
 def test_default_models_yaml_is_gemini_ready():
     """The shipped models.yaml must be valid YAML and Gemini-shaped (user's pick)."""
-    from app.config.settings import DEFAULT_MODELS_YAML
     import yaml
+
+    from app.config.settings import DEFAULT_MODELS_YAML
     # Defaults ship with commented examples only (no fake models) —
     # verify the Gemini example is present and correctly shaped.
     assert "provider: ollama" in DEFAULT_MODELS_YAML or "gemini" in DEFAULT_MODELS_YAML

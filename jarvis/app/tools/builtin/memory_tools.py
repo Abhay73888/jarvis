@@ -67,7 +67,7 @@ class RecallTool(BaseTool):
 
 
 _TIME_RE = re.compile(r"^(\d{1,2}):(\d{2})$")
-_DAY_RE = re.compile(r"^(today|tonight|tomorrow|day after tomorrow)$", re.I)
+_DAY_RE = re.compile(r"^(today|tonight|tomorrow|day after tomorrow)$", re.IGNORECASE)
 
 
 def parse_due_at(raw: str | None, now: datetime | None = None) -> datetime | None:

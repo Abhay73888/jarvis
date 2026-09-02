@@ -35,7 +35,7 @@ class Paths:
     screenshots: Path
     db_file: Path
 
-    def ensure(self) -> "Paths":
+    def ensure(self) -> Paths:
         for p in (self.config, self.data, self.logs, self.screenshots):
             p.mkdir(parents=True, exist_ok=True)
         return self

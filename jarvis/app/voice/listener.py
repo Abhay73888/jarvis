@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import collections
 import time
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import numpy as np
 
@@ -45,10 +45,10 @@ class VoiceListener:
         self,
         engine: AgentEngine,
         bus: EventBus,
-        transcriber: Optional[VoiceTranscriber] = None,
-        synthesizer: Optional[VoiceSynthesizer] = None,
-        on_wake_callback: Optional[Callable[[], None]] = None,
-        on_transcript_callback: Optional[Callable[[str], None]] = None,
+        transcriber: VoiceTranscriber | None = None,
+        synthesizer: VoiceSynthesizer | None = None,
+        on_wake_callback: Callable[[], None] | None = None,
+        on_transcript_callback: Callable[[str], None] | None = None,
     ) -> None:
         self.engine = engine
         self.bus = bus
@@ -62,7 +62,7 @@ class VoiceListener:
         self._is_recording_command = False
         self._manual_trigger = asyncio.Event()
         self._stream = None
-        self._loop: Optional[asyncio.AbstractEventLoop] = None
+        self._loop: asyncio.AbstractEventLoop | None = None
         self._wakeword_model = None
         self._wakeword_loaded = False
         self._noise_floor = 0.001
@@ -151,7 +151,7 @@ class VoiceListener:
         while self._running:
             try:
                 chunk = await asyncio.wait_for(queue.get(), timeout=0.15)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 if self._manual_trigger.is_set():
                     pass
                 else:
@@ -205,9 +205,9 @@ class VoiceListener:
                 log.debug("wakeword error: %s", exc)
         return False
 
-    async def _record_utterance(self, queue: asyncio.Queue[np.ndarray], pre_roll: collections.deque) -> Optional[np.ndarray]:
+    async def _record_utterance(self, queue: asyncio.Queue[np.ndarray], pre_roll: collections.deque) -> np.ndarray | None:
         recorded_chunks = list(pre_roll)
-        silence_start: Optional[float] = None
+        silence_start: float | None = None
         has_spoken = False
         start_time = time.time()
         speech_threshold = max(0.005, self._noise_floor * 2.2)
@@ -215,7 +215,7 @@ class VoiceListener:
         while self._running and (time.time() - start_time < MAX_RECORD_DURATION_S):
             try:
                 chunk = await asyncio.wait_for(queue.get(), timeout=0.4)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 break
 
             recorded_chunks.append(chunk)

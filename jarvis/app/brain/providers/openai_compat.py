@@ -3,7 +3,8 @@ vLLM, Ollama's /v1 endpoint, and anything speaking /chat/completions with SSE st
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
@@ -155,7 +156,7 @@ class OpenAICompatibleProvider(LLMProvider):
                         content += delta_text
                         yield StreamEvent(text=delta_text)
 
-                    if "tool_calls" in delta and delta["tool_calls"]:
+                    if delta.get("tool_calls"):
                         for tc_chunk in delta["tool_calls"]:
                             idx = tc_chunk.get("index", 0)
                             if idx not in tool_calls_map:

@@ -10,7 +10,7 @@ from app.security.risk import RiskLevel
 
 
 class FakeStore(PermissionStore):
-    def __init__(self) -> None:  # noqa: super not needed for the fake
+    def __init__(self) -> None:  # super().__init__ not needed for the fake
         self.grants: dict[str, str] = {}
 
     async def find(self, subject: str) -> str | None:

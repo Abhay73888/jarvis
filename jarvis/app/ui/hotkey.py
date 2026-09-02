@@ -9,9 +9,8 @@ Registers system-wide hotkeys:
 from __future__ import annotations
 
 import ctypes
-from ctypes import wintypes
 import sys
-from typing import Optional
+from ctypes import wintypes
 
 from PySide6.QtCore import QThread, Signal
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Type
+from typing import Any, ClassVar
 
 from pydantic import BaseModel
 
@@ -38,7 +38,7 @@ class ToolContext:
 class BaseTool(ABC):
     name: ClassVar[str]
     description: ClassVar[str]                        # given to the LLM
-    args_model: ClassVar[Type[BaseModel]]             # validated + exported as JSON schema
+    args_model: ClassVar[type[BaseModel]]             # validated + exported as JSON schema
     category: ClassVar[str] = "system"
     risk: ClassVar[RiskLevel] = RiskLevel.LOW
     destructive: ClassVar[bool] = False

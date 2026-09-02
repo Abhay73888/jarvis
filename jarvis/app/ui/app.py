@@ -8,9 +8,7 @@ from __future__ import annotations
 import asyncio
 import sys
 import threading
-from typing import Optional
 
-from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
 from app.core.logging import get_logger
@@ -62,7 +60,7 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
     runtime = future_runtime.result(timeout=15.0)
 
     # 2. Initialize Voice Subsystem
-    voice_listener: Optional[VoiceListener] = None
+    voice_listener: VoiceListener | None = None
     if enable_voice:
         try:
             transcriber = VoiceTranscriber()
@@ -88,7 +86,7 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
     )
 
     # 4. Initialize Windows Global Hotkey (Ctrl + Shift + J)
-    hotkey_thread: Optional[GlobalHotkeyThread] = None
+    hotkey_thread: GlobalHotkeyThread | None = None
     if sys.platform == "win32":
         try:
             hotkey_thread = GlobalHotkeyThread()
@@ -115,8 +113,8 @@ def run_gui_app(start_in_tray: bool = False, enable_voice: bool = True) -> int:
 
 def _cleanup(
     loop: asyncio.AbstractEventLoop,
-    listener: Optional[VoiceListener],
-    hotkey: Optional[GlobalHotkeyThread],
+    listener: VoiceListener | None,
+    hotkey: GlobalHotkeyThread | None,
     app: QApplication,
 ) -> None:
     log.info("shutting down JARVIS GUI application...")

@@ -124,5 +124,5 @@ class ToolManager:
                 await ToolUsageRepo(session).log(
                     tool=name, args=args, risk=risk.label, status=status,
                     duration_ms=duration_ms, error=error)
-        except Exception:  # noqa: BLE001 — logging must never break execution
+        except Exception:
             log.exception("failed to persist tool usage")

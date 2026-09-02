@@ -4,8 +4,8 @@ Voice (§5–7) and the PySide6 GUI (§29) share this engine runtime.
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
 import sys
+from datetime import datetime
 
 from app.brain.greeting import (
     build_greeting,
@@ -231,6 +231,7 @@ def _print_help() -> None:
 
 async def cmd_doctor() -> int:
     from importlib.util import find_spec
+
     from app.config.settings import load_dotenv, load_settings
     from app.utils.paths import get_paths
 

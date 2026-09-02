@@ -2,7 +2,7 @@
 name = "jarvis"
 version = "0.1.0"
 description = "JARVIS — a personal AI operating layer for Windows: voice, reasoning, computer control, memory, and safe autonomous task execution."
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 readme = "README.md"
 
 [tool.pytest.ini_options]
@@ -14,4 +14,4 @@ markers = ["browser: real headless-Chromium browser agent tests"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py311"

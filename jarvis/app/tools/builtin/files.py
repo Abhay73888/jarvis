@@ -9,7 +9,7 @@ import os
 import shutil
 import time
 import zipfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from pydantic import BaseModel, Field
@@ -258,7 +258,7 @@ class SearchFilesTool(BaseTool):
                     found.append({
                         "path": str(full), "name": fname,
                         "size": human_size(stat.st_size),
-                        "modified": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+                        "modified": datetime.fromtimestamp(stat.st_mtime, tz=UTC)
                                     .strftime("%Y-%m-%d %H:%M")})
                     if len(found) >= args["max_results"]:
                         return found
